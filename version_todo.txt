@@ -4,7 +4,7 @@
 4 main.exe 1 bin/main.exe https://raw.github.com/domso/smro/master/bin/main.exe 
 5 server.exe 1 bin/server.exe https://raw.github.com/domso/smro/master/bin/server.exe 
 6 chat.bmp 1 resclient/chat.bmp https://raw.github.com/domso/smro/master/resclient/chat.bmp 
-7 chatlittle.bmp 1 resclient/chatlittle.bmp https://raw.github.com/domso/smro/master/resclient/chatLittle.bmp 
+7 chatlittle.bmp 1 resclient/chatlittle.bmp https://raw.github.com/domso/smro/master/resclient/chatlittle.bmp 
 8 chatbg.bmp 1 resclient/chatbg.bmp https://raw.github.com/domso/smro/master/resclient/chatbg.bmp 
 9 create.bmp 1 resclient/create.bmp https://raw.github.com/domso/smro/master/resclient/create.bmp 
 10 name.bmp 1 resclient/name.bmp https://raw.github.com/domso/smro/master/resclient/name.bmp 
