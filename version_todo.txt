@@ -1,4 +1,4 @@
-1 licence.txt 1 licence.txt https://raw.github.com/domso/smro/master/licence.txt 
+1 license.txt 1 licence.txt https://raw.github.com/domso/smro/master/license.txt 
 2 openb3d.dll 1 openb3d.dll https://raw.github.com/domso/smro/master/openb3d.dll 
 3 client.exe 1 bin/client.exe https://raw.github.com/domso/smro/master/bin/client.exe 
 4 main.exe 1 bin/main.exe https://raw.github.com/domso/smro/master/bin/main.exe 
