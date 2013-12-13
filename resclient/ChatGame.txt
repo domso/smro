@@ -1,0 +1,5 @@
+"Try to reconnect in 2 seconds!"
+"Try to reconnect in 1 seconds!"
+"Try to reconnect in 0 seconds!"
+"Try to Connect..."
+"Connection error!"
