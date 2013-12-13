@@ -2,7 +2,7 @@
 2 SnowManRun.exe 1 SnowManRun_temp.exe https://raw.github.com/domso/smro/master/SnowManRun.exe 
 3 openb3d.dll 1 openb3d.dll https://raw.github.com/domso/smro/master/openb3d.dll 
 4 client.exe 1 bin/client.exe https://raw.github.com/domso/smro/master/bin/client.exe 
-5 main.exe 1 bin/main.exe ttps://raw.github.com/domso/smro/master/bin/main.exe 
+5 main.exe 1 bin/main.exe https://raw.github.com/domso/smro/master/bin/main.exe 
 6 server.exe 1 bin/server.exe https://raw.github.com/domso/smro/master/bin/server.exe 
 7 chat.bmp 1 resclient/chat.bmp https://raw.github.com/domso/smro/master/resclient/chat.bmp 
 8 chatlittle.bmp 1 resclient/chatlittle.bmp https://raw.github.com/domso/smro/master/resclient/chatlittle.bmp 
