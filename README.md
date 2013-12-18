@@ -1,7 +1,6 @@
 SnowManRunOnline
 
 Please read the "License.txt"
-[url=https://raw.github.com/domso/smro/master/license.txt]asd[/url]
 (https://raw.github.com/domso/smro/master/license.txt)
 
 Usage:
