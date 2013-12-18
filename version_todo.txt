@@ -55,8 +55,8 @@
 55 title18.b3d 1 resgame/tile18.b3d https://raw.github.com/domso/smro/master/resgame/tile18.b3d 
 56 title19.b3d 1 resgame/tile19.b3d https://raw.github.com/domso/smro/master/resgame/tile19.b3d 
 57 title20.b3d 1 resgame/tile20.b3d https://raw.github.com/domso/smro/master/resgame/tile20.b3d 
-57 title21.b3d 1 resgame/tile21.b3d https://raw.github.com/domso/smro/master/resgame/tile21.b3d 
-57 title22.b3d 1 resgame/tile22.b3d https://raw.github.com/domso/smro/master/resgame/tile22.b3d 
-57 title23.b3d 1 resgame/tile23.b3d https://raw.github.com/domso/smro/master/resgame/tile23.b3d 
-57 title24.b3d 1 resgame/tile24.b3d https://raw.github.com/domso/smro/master/resgame/tile24.b3d 
-58 finish.b3d 1 resgame/finish.b3d https://raw.github.com/domso/smro/master/resgame/finish.b3d 
+58 title21.b3d 1 resgame/tile21.b3d https://raw.github.com/domso/smro/master/resgame/tile21.b3d 
+59 title22.b3d 1 resgame/tile22.b3d https://raw.github.com/domso/smro/master/resgame/tile22.b3d 
+60 title23.b3d 1 resgame/tile23.b3d https://raw.github.com/domso/smro/master/resgame/tile23.b3d 
+61 title24.b3d 1 resgame/tile24.b3d https://raw.github.com/domso/smro/master/resgame/tile24.b3d 
+62 finish.b3d 1 resgame/finish.b3d https://raw.github.com/domso/smro/master/resgame/finish.b3d 
