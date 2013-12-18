@@ -16,7 +16,7 @@
     
     This does not include:
     -Openb3d-Library
-     This library is licensed with the "lgpl"
+     This library is licensed under the "lgpl"
      (A copy of the license can be found at "https://raw.github.com/domso/smro/master/licenses/lgpl.txt")
      Please visit "http://sourceforge.net/projects/minib3d/" for further
      License Information!
@@ -27,6 +27,6 @@
      further License Information!
      
     -sky15.zip-SkyCube
-	 This material is licensed with the "(CC BY 3.0)"
+	 This material is licensed under the "(CC BY 3.0)"
      Please visit "http://www.3delyvisions.com/skf1.htm" and "http://creativecommons.org/licenses/by/3.0/" for further
      License Information!
