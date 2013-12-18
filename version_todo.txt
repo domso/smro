@@ -59,3 +59,4 @@
 57 title22.b3d 1 resgame/tile22.b3d https://raw.github.com/domso/smro/master/resgame/tile22.b3d 
 57 title23.b3d 1 resgame/tile23.b3d https://raw.github.com/domso/smro/master/resgame/tile23.b3d 
 57 title24.b3d 1 resgame/tile24.b3d https://raw.github.com/domso/smro/master/resgame/tile24.b3d 
+57 finish.b3d 1 resgame/finish.b3d https://raw.github.com/domso/smro/master/resgame/finish.b3d 
