@@ -30,7 +30,7 @@
 30 sky.b3d 1 resgame/sky.b3d https://raw.github.com/domso/smro/master/resgame/sky.b3d 
 31 snow_sprite.png 1 resgame/snow_sprite.png https://raw.github.com/domso/smro/master/resgame/snow_sprite.png 
 32 stein.png 1 resgame/stein.png https://raw.github.com/domso/smro/master/resgame/stein.png 
-33 skybox.png 1 resgame/skybox.png https://raw.github.com/domso/smro/master/resgame/skybox.png 
+33 sky_box.png 1 resgame/sky_box.png https://raw.github.com/domso/smro/master/resgame/sky_box.png 
 34 speed.png 1 resgame/speed.png https://raw.github.com/domso/smro/master/resgame/speed.png 
 35 speed2.png 1 resgame/speed2.png https://raw.github.com/domso/smro/master/resgame/speed2.png 
 36 stern.png 1 resgame/stern.png https://raw.github.com/domso/smro/master/resgame/stern.png 
