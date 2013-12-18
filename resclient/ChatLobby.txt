@@ -1,3 +1,0 @@
-"Connection error!"
-"Try to reconnect in 4 seconds!"
-"Try to reconnect in 3 seconds!"
