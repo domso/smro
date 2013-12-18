@@ -24,7 +24,6 @@
 24 sky.b3d 1 resgame/sky.b3d https://raw.github.com/domso/smro/master/resgame/sky.b3d 
 25 snow_sprite.png 1 resgame/snow_sprite.png https://raw.github.com/domso/smro/master/resgame/snow_sprite.png 
 26 stein.png 1 resgame/stein.png https://raw.github.com/domso/smro/master/resgame/stein.png 
-27 title.b3d 1 resgame/tile.b3d https://raw.github.com/domso/smro/master/resgame/tile.b3d 
 28 title1.b3d 1 resgame/tile1.b3d https://raw.github.com/domso/smro/master/resgame/tile1.b3d 
 29 title2.b3d 1 resgame/tile2.b3d https://raw.github.com/domso/smro/master/resgame/tile2.b3d 
 30 title3.b3d 1 resgame/tile3.b3d https://raw.github.com/domso/smro/master/resgame/tile3.b3d 
