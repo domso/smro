@@ -9,7 +9,7 @@ It will download und update the game!
 
 Further informations:
 
-Programm-Language:  
+Programm-Language:
 freebasic                  
 Please visit "http://www.freebasic.net"
 
