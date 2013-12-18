@@ -18,6 +18,11 @@
      Please visit "http://sourceforge.net/projects/minib3d/" for further
      License Information!
      
+    -TSNE V3 & TSNE_Play Library
+     Please visit "http://www.freebasic-portal.de/projekte/tsne-11.html"
+     and "http://www.freebasic-portal.de/projekte/tsneplay-36.html" for
+     further License Information!
+     
     -sky15.zip-SkyCube
      Please visit "http://www.3delyvisions.com/skf1.htm" for further
      License Information!
