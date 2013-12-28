@@ -7,6 +7,10 @@ Usage:
 Download SnowManRun.exe and run it!
 It will download und update the game!
 
+Controlls:
+Use the Arrow-Keys to navigate your Snowman
+Use the Space-bar to jump
+
 
 Further informations:
 
