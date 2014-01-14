@@ -13,7 +13,7 @@
 13 ready.bmp 1 resclient/ready.bmp https://raw.github.com/domso/smro/master/resclient/ready.bmp 
 14 screen.bmp 1 resclient/screen.bmp https://raw.github.com/domso/smro/master/resclient/screen.bmp 
 15 scroll.bmp 1 resclient/scroll.bmp https://raw.github.com/domso/smro/master/resclient/scroll.bmp 
-16 start.bmp 1 resclient/start.bmp https://raw.github.com/domso/smro/master/resclient/start.bmp 
+16 start.bmp 2 resclient/start.bmp https://raw.github.com/domso/smro/master/resclient/start.bmp 
 17 table.bmp 1 resclient/table.bmp https://raw.github.com/domso/smro/master/resclient/table.bmp 
 18 close.bmp 1 resclient/close.bmp https://raw.github.com/domso/smro/master/resclient/close.bmp 
 19 games.bmp 1 resclient/games.bmp https://raw.github.com/domso/smro/master/resclient/games.bmp 
