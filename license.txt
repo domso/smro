@@ -10,9 +10,8 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 	
-	(A copy of the license can be found at "https://raw.github.com/domso/smro/master/licenses/gpl.txt")
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    A copy of the license can be found at "https://raw.github.com/domso/smro/master/licenses/gpl.txt"
+    or visit <http://www.gnu.org/licenses/>.
     
     This does not include:
     -Openb3d-Library
