@@ -66,4 +66,4 @@
 66 tile25.b3d 1 resgame/tile25.b3d https://raw.github.com/domso/smro/master/resgame/tile25.b3d 
 67 configIcon.bmp 1 resclient/configIcon.bmp https://raw.github.com/domso/smro/master/resclient/configIcon.bmp 
 68 tik1.bmp 1 resclient/tik1.bmp https://raw.github.com/domso/smro/master/resclient/tik1.bmp 
-68 tik2.bmp 1 resclient/tik2.bmp https://raw.github.com/domso/smro/master/resclient/tik2.bmp 
+69 tik2.bmp 1 resclient/tik2.bmp https://raw.github.com/domso/smro/master/resclient/tik2.bmp 
