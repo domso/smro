@@ -2,7 +2,7 @@
 Randomize timer
 Declare Sub Senddata(player As Integer,data_send_1 As string,data_send_2 As String,data_send_3 As String,data_send_4 As String,data_type_1 As Integer,data_type_2 As Integer,data_type_3 As Integer,data_type_4 As Integer)
 Dim Shared RV as TSNEPlay_GURUCode
-Dim Shared As Integer anzahl_tile=24
+Dim Shared As Integer anzahl_tile=25
 Type player_type
 	As String nickname
 	As Integer online,id,game
@@ -22,7 +22,7 @@ Type highscore_type
 End Type
 
 Type game_type
-	As Integer player(1 To 10),enable,game_playerID(1 To 10),player_id(1 To 10),player_ready(1 To 10),set_ready,max_len=100,aktu_len,game_player_ready(1 To 10)
+	As Integer player(1 To 10),enable,game_playerID(1 To 10),player_id(1 To 10),player_ready(1 To 10),set_ready,max_len=100,aktu_len,game_player_ready(1 To 10),daytime=1
 	As String title
 	As highscore_type hsc
 End Type
@@ -570,7 +570,19 @@ Sub TSNEPlay_Data(ByVal V_FromPlayerID as UInteger, ByVal V_ToPlayerID as UInteg
 							Next
 						End If
 					Next
-					
+				ElseIf dt_data(4)=4 Then
+					For gi As Integer = 1 To UBound(game)
+						If game(gi).enable=1 then
+							For i As Integer = 1 To 10
+								If game(gi).player(i)<>0 And game(gi).player_id(i)=V_FromPlayerID Then
+									If ds_data(2)<>"" Then game(gi).daytime=Val(ds_data(2))
+				
+									
+									Exit sub
+								EndIf
+							Next
+						End If
+					Next	
 				EndIf
 			EndIf
 		EndIf
@@ -578,8 +590,13 @@ Sub TSNEPlay_Data(ByVal V_FromPlayerID as UInteger, ByVal V_ToPlayerID as UInteg
 	
 
 End Sub
+Dim As Integer ServerPort=9850
+If Command(1)<>"" Then
+	ServerPort=Val(Command(1))
+EndIf
+
 server_Log("Initial server")
-RV = TSNEPlay_CreateServer(UBound(player), 9850, "server", "", 0, @TSNEPlay_Player_Connected, @TSNEPlay_Player_Disconnected, @TSNEPlay_Message,0, @TSNEPlay_Data)
+RV = TSNEPlay_CreateServer(UBound(player), ServerPort, "server", "", 0, @TSNEPlay_Player_Connected, @TSNEPlay_Player_Disconnected, @TSNEPlay_Message,0, @TSNEPlay_Data)
 server_Log("Server online")
 
 Do
@@ -599,7 +616,7 @@ Do
 							If player(p_k).id=game(g_i).player_id(p_j) Then
 								Senddata(game(g_i).player_id(p_i),"users",player(p_k).nickname,Str(game(g_i).player_ready(p_j)),Str(game(g_i).set_ready),3,game(g_i).player_id(p_j),p_j,game(g_i).player(p_j))
 								
-								Senddata(game(g_i).player_id(p_i),"config",Str(game(g_i).max_len),"","",5,1,1,1)
+								Senddata(game(g_i).player_id(p_i),"config",Str(game(g_i).max_len),Str(game(g_i).daytime),"",5,1,1,1)
 							End if
 						Next
 					End If	

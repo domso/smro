@@ -20,8 +20,22 @@ Sub tile_type.load
 	hideEntity this.obj
 End Sub
 
+Type daytimeType
+	As Integer fog_max,fog_min,fog_red,fog_green,fog_blue,amb_red,amb_green,amb_blue
+End Type
+
+Type config_item_type
+	As Integer value
+End Type
+
+Type config_type
+	As Integer maxConfig
+	As config_item_type config(1 To 15)
+End Type
+
 Type global_type
-	As Integer windowx,windowy,finish,ready
+	As Integer windowx,windowy,finish,ready,setdaytime=3
+	As daytimeType daytime(1 To 3)
 	As Double zeit,fs
 	As String param(1 To 3),world
 	As Any Ptr camera,light,ter(1 To 9),tile(1 to 2,1 To 3),sky_box,item(1 To 2, 1 To 5)
@@ -29,6 +43,7 @@ Type global_type
 	Declare Sub init
 	Declare Sub sendhsc(hsc_name As String,hsc_punkte As String, hsc_meter As String, hsc_time As double,force As integer)
 
+	as config_type configValue
 	'interface
 	As Any Ptr SpeedMeter( 1 To 2),waiting,finishscreen,finishTileMesh
 End Type
@@ -39,12 +54,18 @@ Sub global_type.init
 	ScreenInfo this.windowx,this.windowy 
 	param(1)=Command(1)
 	param(2)=Command(2)
+	param(3)=Command(3)
+	this.setdaytime=val(Command(4))
+	
+	For i As Integer = 1 To 15
+		this.configValue.config(i).value=Val(Command(i+4))
+	Next
 	
 	
 	Do
-		
+
 	TSNEPlay_CloseAll()
-	RV = TSNEPlay_ConnectToServer(param(1),9850,param(2),"",0,0,0,0,0,@TSNEPlay_Data)
+	RV = TSNEPlay_ConnectToServer(param(1),Val(param(2)),param(3),"",0,0,0,0,0,@TSNEPlay_Data)
 	If RV <> TSNEPlay_NoError Then 
 		Print "[ERROR] "; TSNEPlay_Desc_GetGuruCode(RV)
 		Print "Could not connect as "+Str(param(2))+"@"+Str(param(1))
@@ -58,8 +79,12 @@ Sub global_type.init
 	'this.windowy=600
 
 
+	If this.configValue.config(1).value=1 Then 
+		ScreenRes this.windowx,this.windowy,32,,&h10002 Or &h01	
+	Else
+		ScreenRes this.windowx,this.windowy,32,,&h10002
+	EndIf
 	
-	ScreenRes this.windowx,this.windowy,32,,&h10002' Or &h01
 	Graphics3D this.windowx,this.windowy
 	this.camera=createcamera
 	
@@ -95,12 +120,18 @@ Sub global_type.init
 	
 	moveEntity this.camera,0,5,10
 	turnEntity This.camera,200,0,180
-	CameraRange camera, 1, 250
-	CameraClsColor camera, 222, 252, 255
-	CameraFogColor camera, 222, 252, 255
+	CameraRange camera, 1, 283
+	
+	'CameraClsColor camera, 222, 252, 255
+	
+	CameraFogColor camera, this.daytime(setdaytime).fog_red,this.daytime(setdaytime).fog_green,this.daytime(setdaytime).fog_blue
+	AmbientLight this.daytime(setdaytime).amb_red,this.daytime(setdaytime).amb_green,this.daytime(setdaytime).amb_blue
 	cameraFogMode camera,1
-	CameraFogRange camera, 50,230
-	this.light=createlight
+	CameraFogRange camera, this.daytime(setdaytime).fog_min,this.daytime(setdaytime).fog_max
+	this.light=createlight(1)
+	LightColor this.light, this.daytime(setdaytime).amb_red,this.daytime(setdaytime).amb_green,this.daytime(setdaytime).amb_blue
+	moveEntity this.light,0,5,0
+	'EntityParent this.light,this.camera
 	For t_i As Integer = 1 To 9
 		this.ter(t_i)=loadMesh("ground.b3d")
 		Entitytype this.ter(t_i),2
@@ -130,6 +161,13 @@ Sub global_type.init
 	this.world+=Chr(1)
 	this.world+=Chr(1)
 	
+	For i As Integer = 1 To 2
+		For j As Integer = 1 To 3
+			this.tile(i,j)=createcube		
+		Next
+	Next
+	
+	
 
 	
 End Sub
@@ -147,7 +185,7 @@ End Type
 
 Dim Shared As Any Ptr player_obj
 Type player_type
-	As Any Ptr obj,obj2
+	As Any Ptr obj,obj2,shadow,shadowMeshObj
 	As double aktu_world,speed_minus,max_speed,gfx,gfx_count,sprung_aktiv,sprung_dauer,sprung_aktu_dauer,zeit,start_zeit,finish_zeit,pos_x,pos_y,pos_z,old_pos_x,old_pos_y,old_pos_z,rot_x,rot_y,rot_z,meter_sec
 	As Integer meter,start_meter,modi,enable,punkte
 	Declare Sub init
@@ -156,7 +194,13 @@ End Type
 
 Sub player_type.init
 	this.obj=copyEntity(player_obj)'
+	this.shadowMeshObj=copyEntity(player_obj)
+	ScaleEntity this.shadowMeshObj,1.2,1.2,1.2
+	EntityAlpha this.ShadowMeshObj,0
+	
+	EntityParent this.ShadowMeshObj,this.obj
 	this.obj2=createMesh
+	'EntityFx this.obj,4
 	EntityParent this.obj2,this.obj
 	this.max_speed=200
 	this.speed_minus=this.max_speed
@@ -192,6 +236,7 @@ Sub player_type.controlls(plfs As Double)
 End Sub
 
 
+
 Type typgfx
 	As double aktiv,speed, x=1,y=1,z=1, hoehe
 	As Any Ptr obj
@@ -217,21 +262,48 @@ sub item_type.load
 	hideentity this.obj
 End Sub
 
+
+
 Dim Shared As global_type global
+global.daytime(1).fog_max=250
+global.daytime(1).fog_min=50
+global.daytime(1).fog_red=255
+global.daytime(1).fog_green=255
+global.daytime(1).fog_blue=255
+global.daytime(1).amb_red=127
+global.daytime(1).amb_green=127
+global.daytime(1).amb_blue=127
+
+global.daytime(2).fog_max=85
+global.daytime(2).fog_min=50
+global.daytime(2).fog_red=0
+global.daytime(2).fog_green=0
+global.daytime(2).fog_blue=0
+global.daytime(2).amb_red=50
+global.daytime(2).amb_green=50
+global.daytime(2).amb_blue=50
+
+
 global.init
 
 player_obj=loadmesh("body.b3d")
+
+
+
 Dim Shared As player_type player(0 To 10)
 For p_ci As Integer= 0 To UBound(player)
 	player(p_ci).init
 Next
+'player(0).shadow=createShadow(player(0).obj)
+
 'Player 0 -> selbst
+ 
 
 Entityparent global.camera, player(0).obj2
 
 PositionEntity player(0).obj,0,10,0
 
-Dim Shared As Integer anzahl_tile=24
+Dim Shared As Integer anzahl_tile=25
 Dim Shared As tile_type tile(0 To anzahl_tile)
 tile(0).filename="finish.b3d"
 tile(0).typ=1
@@ -499,6 +571,17 @@ tile(24).sz=10
 tile(24).sy=10
 tile(24).lx=10
 tile(24).load
+
+
+tile(25).filename="tile25.b3d"
+tile(25).typ=1
+tile(25).ry=180
+tile(25).sx=10
+tile(25).sz=10
+tile(25).sy=10
+tile(25).lx=10
+tile(25).load
+
 
 
 Dim Shared As Integer item_anzahl=1

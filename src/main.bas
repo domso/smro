@@ -13,7 +13,9 @@ ChDir("resgame")
 init_game
 player(0).start_zeit=Timer
 Do
-	cls
+	Cls
+	
+	
 	global.zeit=timer
 	player(0).start_meter=player(0).meter
 
@@ -31,7 +33,9 @@ Do
 		player(0).speed_minus+=300*global.fs
 		turnEntity player(0).obj2,0,100*global.fs,0
 	End if
+	
 	update_game
+	
    render_gfx
 	render_screen
 	global.fs=(Timer-global.zeit)

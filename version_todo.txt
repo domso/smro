@@ -2,9 +2,9 @@
 2 license.txt 1 license.txt https://raw.github.com/domso/smro/master/license.txt 
 3 SnowManRun.exe 1 SnowManRun_temp.exe https://raw.github.com/domso/smro/master/SnowManRun.exe 
 4 openb3d.dll 1 openb3d.dll https://raw.github.com/domso/smro/master/openb3d.dll 
-5 client.exe 1 bin/client.exe https://raw.github.com/domso/smro/master/bin/client.exe 
-6 main.exe 1 bin/main.exe https://raw.github.com/domso/smro/master/bin/main.exe 
-7 server.exe 1 bin/server.exe https://raw.github.com/domso/smro/master/bin/server.exe 
+5 client.exe 2 bin/client.exe https://raw.github.com/domso/smro/master/bin/client.exe 
+6 main.exe 2 bin/main.exe https://raw.github.com/domso/smro/master/bin/main.exe 
+7 server.exe 2 bin/server.exe https://raw.github.com/domso/smro/master/bin/server.exe 
 8 chat.bmp 1 resclient/chat.bmp https://raw.github.com/domso/smro/master/resclient/chat.bmp 
 9 chatlittle.bmp 1 resclient/chatlittle.bmp https://raw.github.com/domso/smro/master/resclient/chatlittle.bmp 
 10 chatbg.bmp 1 resclient/chatbg.bmp https://raw.github.com/domso/smro/master/resclient/chatbg.bmp 
@@ -46,7 +46,7 @@
 46 tile5.b3d 1 resgame/tile5.b3d https://raw.github.com/domso/smro/master/resgame/tile5.b3d 
 47 tile6.b3d 1 resgame/tile6.b3d https://raw.github.com/domso/smro/master/resgame/tile6.b3d 
 48 tile7.b3d 1 resgame/tile7.b3d https://raw.github.com/domso/smro/master/resgame/tile7.b3d 
-49 tile8.b3d 1 resgame/tile8.b3d https://raw.github.com/domso/smro/master/resgame/tile8.b3d 
+49 tile8.b3d 2 resgame/tile8.b3d https://raw.github.com/domso/smro/master/resgame/tile8.b3d 
 50 tile9.b3d 1 resgame/tile9.b3d https://raw.github.com/domso/smro/master/resgame/tile9.b3d 
 51 tile10.b3d 1 resgame/tile10.b3d https://raw.github.com/domso/smro/master/resgame/tile10.b3d 
 52 tile11.b3d 1 resgame/tile11.b3d https://raw.github.com/domso/smro/master/resgame/tile11.b3d 
@@ -63,3 +63,7 @@
 63 tile22.b3d 1 resgame/tile22.b3d https://raw.github.com/domso/smro/master/resgame/tile22.b3d 
 64 tile23.b3d 1 resgame/tile23.b3d https://raw.github.com/domso/smro/master/resgame/tile23.b3d 
 65 tile24.b3d 1 resgame/tile24.b3d https://raw.github.com/domso/smro/master/resgame/tile24.b3d 
+66 tile25.b3d 1 resgame/tile25.b3d https://raw.github.com/domso/smro/master/resgame/tile25.b3d 
+67 configIcon.bmp 1 resclient/configIcon.bmp https://raw.github.com/domso/smro/master/resclient/configIcon.bmp 
+68 tik1.bmp 1 resclient/tik1.bmp https://raw.github.com/domso/smro/master/resclient/tik1.bmp 
+68 tik2.bmp 1 resclient/tik2.bmp https://raw.github.com/domso/smro/master/resclient/tik2.bmp 

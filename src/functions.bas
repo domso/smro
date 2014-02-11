@@ -1,3 +1,4 @@
+
 Dim Shared As String temp_user_name
 
 
@@ -158,7 +159,7 @@ Sub load_game(lvl As Integer)
 			global.finishTileMesh=global.tile(lvl,i)
 			EntityFx global.tile(lvl,i),16
 			player(0).aktu_world=lvl
-
+			'global.tileShadow(lvl,i)=createShadow(global.tile(lvl,i))
 		
 			If tile(global.tile_belegt(lvl,i)).typ=1 Then 
 				turnEntity global.tile(lvl,i),0,(global.tile_rot),0
@@ -219,9 +220,23 @@ Sub update_game
 		If global.tile(player(0).aktu_world,1)=mesh_col Or global.tile(player(0).aktu_world,2)=mesh_col Or global.tile(player(0).aktu_world,3)=mesh_col Then
 			If player(0).aktu_world=1 Then 
 				
+				'freeshadow(global.tileshadow(2,1))
+				'freeshadow(global.tileshadow(2,2))
+				'freeshadow(global.tileshadow(2,3))
+				
 				freeEntity global.tile(2,1)
 				freeEntity global.tile(2,2)
 				freeEntity global.tile(2,3)
+				
+				
+				
+				global.tile(2,1)=createMesh
+				global.tile(2,2)=createMesh
+				global.tile(2,3)=createMesh
+				
+		
+				
+				
 				If global.item_belegt(2,1)<>0 Then freeEntity global.item(2,1)
 				load_game(2)
 				'If global.finish=0 Then player(0).punkte+=1
@@ -230,11 +245,20 @@ Sub update_game
 
 			
 			ElseIf player(0).aktu_world=2 Then
-				
+				'freeshadow(global.tileshadow(1,1))
+				'freeshadow(global.tileshadow(1,2))
+				'freeshadow(global.tileshadow(1,3))
 
 				freeEntity global.tile(1,1)
 				freeEntity global.tile(1,2)
 				freeEntity global.tile(1,3)
+				
+				global.tile(1,1)=createMesh
+				global.tile(1,2)=createMesh
+				global.tile(1,3)=createMesh
+				
+
+				
 				If global.item_belegt(1,1)<>0 Then freeEntity global.item(1,1)
 				load_game(1) 
 				'If global.finish=0 Then player(0).punkte+=1
@@ -243,6 +267,8 @@ Sub update_game
 
 			EndIf
 		EndIf
+		
+		
 		If global.ter(1)=mesh_col Or global.ter(2)=mesh_col Or global.ter(3)=mesh_col Or global.ter(4)=mesh_col Or global.ter(5)=mesh_col Or global.ter(6)=mesh_col Or global.ter(7)=mesh_col Or global.ter(8)=mesh_col Or global.ter(9)=mesh_col Then
 			player(0).modi=0
 			'positionEntity player(0).obj,global.tile_x,100,global.tile_z
@@ -251,6 +277,8 @@ Sub update_game
 			
 
 		EndIf	
+		
+		
 	Next
 
 	If EntityX(player(0).obj)-global.ter_x>50 Then
@@ -346,7 +374,7 @@ Sub update_game
 	'WindowTitle Str(player(0).aktu_world)
 	
    positionEntity global.sky_box,EntityX(player(0).obj),Entityy(player(0).obj),Entityz(player(0).obj)
-   positionEntity global.light ,EntityX(player(0).obj),Entityy(player(0).obj)+50,Entityz(player(0).obj)
+   'positionEntity global.light ,EntityX(player(0).obj)-50,Entityy(player(0).obj)+50,Entityz(player(0).obj)+10
 
 
 	
@@ -384,7 +412,7 @@ Function gfx_player(ByRef snow_akt As Integer, ByRef snow_dichte As Integer, ByR
 			player_gfx(gfx_i).hoehe=player_gfx(gfx_i).z	
 			player_gfx(gfx_i).obj=loadsprite("snow_sprite.png")
 			scaleEntity player_gfx(gfx_i).obj,2,2,2			
-			SpriteViewMode  player_gfx(gfx_i).obj,4
+			SpriteViewMode  player_gfx(gfx_i).obj,3
 			Entityfx player_gfx(gfx_i).obj,16
 			positionEntity player_gfx(gfx_i).obj,EntityX(player(0).obj),Entityy(player(0).obj),Entityz(player(0).obj)
 		Next
@@ -397,8 +425,10 @@ Function gfx_player(ByRef snow_akt As Integer, ByRef snow_dichte As Integer, ByR
 	EndIf
 End Function
 
+
+
 Sub render_gfx
-	If level_regen= 1 then
+	If global.configValue.config(2).value=1 Then
 		For gfx_i As Integer = 1 To regen_count
 			If regen(gfx_i).aktiv=1 Then
 				regen(gfx_i).hoehe=Int(Rnd*10)
@@ -414,18 +444,23 @@ Sub render_gfx
 			positionEntity regen(gfx_i).obj,regen(gfx_i).x,regen(gfx_i).y,regen(gfx_i).z
 		Next
 	End If
-	For gfx_i As Integer = 1 To player(0).gfx_count
-		If player_gfx(gfx_i).aktiv=1 Then
-			If player_gfx(gfx_i).hoehe>0 Then moveEntity player_gfx(gfx_i).obj,-1+Int(Rnd*2),1,-1+Int(Rnd*2) 	
-			If player_gfx(gfx_i).hoehe<0 Then moveEntity player_gfx(gfx_i).obj,0,-1,0
-			player_gfx(gfx_i).hoehe-=1
-			If EntityY(player_gfx(gfx_i).obj)<=0 And player(0).gfx=1  Then
-				positionEntity player_gfx(gfx_i).obj,EntityX(player(0).obj),Entityy(player(0).obj),Entityz(player(0).obj)
-				moveEntity player_gfx(gfx_i).obj,0,0,-1+Int(Rnd*2)
-				player_gfx(gfx_i).hoehe=-5+Int(Rnd*10)+1
+	
+	If global.configValue.config(3).value=1 then
+		For gfx_i As Integer = 1 To player(0).gfx_count
+			If player_gfx(gfx_i).aktiv=1 Then
+				'If player_gfx(gfx_i).hoehe>0 Then moveEntity player_gfx(gfx_i).obj,-1+Int(Rnd*2),1,-1+Int(Rnd*2) 	
+				If player_gfx(gfx_i).hoehe>0 Then moveEntity player_gfx(gfx_i).obj,0,1,0 	
+				If player_gfx(gfx_i).hoehe<0 Then moveEntity player_gfx(gfx_i).obj,0,-1,0
+				player_gfx(gfx_i).hoehe-=1
+				If EntityY(player_gfx(gfx_i).obj)<=0 And player(0).gfx=1  Then
+					positionEntity player_gfx(gfx_i).obj,EntityX(player(0).obj),Entityy(player(0).obj),Entityz(player(0).obj)
+					RotateEntity player_gfx(gfx_i).obj,EntityPitch(player(0).obj),EntityYaw(player(0).obj)-10+Int(Rnd*10),-1*EntityRoll(player(0).obj)-10+Int(Rnd*10)
+					'moveEntity player_gfx(gfx_i).obj,0,0,-1+Int(Rnd*2)
+					player_gfx(gfx_i).hoehe=-5+Int(Rnd*10)+1
+				EndIf
 			EndIf
-		EndIf
-	Next
+		Next
+	End if
 End Sub
 
 Sub init_game
@@ -433,6 +468,7 @@ Sub init_game
 	load_game(player(0).aktu_world)
 	gfx(1,500,5)
 	gfx_player(1,25,5)
+
 	turnEntity player(0).obj,0,-90,0
 
 	'turnentity global.camera,0,180,0

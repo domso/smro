@@ -9,9 +9,11 @@ Declare Sub log_chat(input_msg As String)
 Declare Sub Senddata(player As Integer,data_send_1 As String,data_send_2 As String,data_send_3 As String,data_send_4 As String,data_type_1 As Integer,data_type_2 As Integer,data_type_3 As Integer,data_type_4 As Integer)
 
 ChDir("resclient")
-
+Dim Shared As String daytimealias(1 To 2)
+daytimealias(1)="Day"
+daytimealias(2)="Night"
 Type game_type
-	As Integer player(0 To 10),player_id(0 To 10),ready(0 To 10),host,enable,count,set_start_game,set_ready,max_tile=100
+	As Integer player(0 To 10),player_id(0 To 10),ready(0 To 10),daytime=1,host,enable,count,set_start_game,set_ready,max_tile=100
 	As String player_name(0 To 10),title
 	
 	
@@ -50,7 +52,7 @@ End Function
 
 Sub game_type.wait
 	ScreenUnLock
-	cls
+	Cls
 	Do
 		Sleep 1,1 
 		'Sleep 1000,1 
@@ -62,42 +64,96 @@ Sub game_type.wait
 	Next
 End Sub
 
-Sub game_type.start
-	Dim As String send_game_string="game"+Str(Len(Str(this.count)))+Str(this.count)+this.player_name(0)
-	Do
-	Loop Until this.set_start_game=1
-	this.set_start_game=0
-	ChDir("..")
+
+Type config_item_type
+	As Integer value,list,headline
+	As String title
+End Type
+
+Type config_type
+	As Integer maxConfig
+	As config_item_type config(1 To 15)
+	Declare Sub load
+	Declare Sub save
+	Declare Constructor
+End Type
+
+Constructor config_type
+	this.maxConfig=15
+	this.config(1).title="Fullscreen"
+	this.config(1).value=0
+	this.config(2).title="GFX-snow"
+	this.config(2).value=1
+	this.config(3).title="GFX-player"
+	this.config(3).value=1
+	this.config(4).title="Local server"
+	this.config(4).value=0
 	
-	'Shell "start main.exe 127.0.0.1 "+send_game_string
-	'Shell "start bin/main.exe 127.0.0.1 "+send_game_string
-	Shell "start bin/main.exe klingenbund.org "+send_game_string
-	ChDir("resclient")
+	
+	this.config(5).title="Select Server"
+	this.config(5).headline=1
+	this.config(5).value=1
+	
+	this.config(6).title="serverSelection"
+	this.config(6).list=1
+	this.config(6).value=1
+	
+
+End Constructor
+
+Sub config_type.save
+	Dim As Integer f=FreeFile,tmptest=1
+	Open "config" For Binary As #f
+		print #f,tmptest
+		For i As Integer = 1 To 15
+			print #f,this.config(i).value
+		Next
+	Close #f
 End Sub
 
-
+Sub config_type.load
+	Dim As Integer f=FreeFile,tmptest=1
+	Open "config" For Binary As #f
+		Input #f,tmptest
+		If tmptest=0 Then
+			Close #f
+			Exit sub
+		EndIf
+		For i As Integer = 1 To 15
+			Input #f,this.config(i).value
+		Next
+	Close #f
+End Sub
 
 Dim Shared As game_type game(0 To 100)
 
 Type global_type
-	As Integer windowx,windowy,verbindungs_status,verbindungs_counter,verbindungs_set_show
-	As Double verbindungs_time
-	As String chat_text(1 To 30)
+	As Integer windowx,windowy,verbindungs_status,verbindungs_counter,verbindungs_set_show,maxFPS=50,serverPort(0 To 10)
+	As Double verbindungs_time,zeit
+	As String chat_text(1 To 30),serverAddresse(0 To 10)
 	As Integer chat_text_verschiebung,chat_lock
+	
+	as config_type configValue
+	
 	Declare Sub init
 	Declare Sub quit(temp_mx As Integer,temp_my As Integer,temp_mb As Integer)
+	Declare Sub configButton(temp_mx As Integer,temp_my As Integer,temp_mb As Integer)
+	Declare Sub configMenu
 	Declare Sub chat
 	Declare Sub window_move
 	Declare Sub verbinden
 	Declare Sub verbindung
+	Declare Sub getServerData
 	Declare Function input_name  As String
 	As Any Ptr background
 	As Any Ptr table
 	As Any Ptr logo
 	As Any Ptr games
 	As Any Ptr player
-	As Any Ptr config
+	As Any Ptr tik(0 to 1)
+	As Any Ptr configIcon
 	As Any Ptr closeobj
+	As Any Ptr config
 	As button_type leftbutton
 	As button_type rightbutton
 	As Any Ptr scrollBackground
@@ -116,6 +172,55 @@ Type global_type
 	Declare Sub hsc
 End Type
 
+Sub global_type.getServerData
+	Dim As Integer f=FreeFile
+	Dim As String tmpRead,tmpHead
+
+	Open "ServerIP.txt" For Binary As #f
+		Input #f,tmpHead
+		For i As Integer = 1 To 10
+			Input #f,tmpRead
+			For j As Integer = 0 To Len(tmpread)
+				If Mid(tmpread,j,1)=" " Then
+					this.serveraddresse(i)=Mid(tmpread,1,j-1)
+					this.serverport(i)=Val(Mid(tmpread,j+1))
+					Exit for
+				EndIf
+			Next
+			
+		Next
+	Close #f
+	
+	If this.serveraddresse(1)="" Then
+		tmpHead="This is the serverList!"
+		this.serveraddresse(1)="klingenbund.org"
+		this.serverport(1)=9850
+	EndIf
+	
+	f=FreeFile
+	
+	Open "ServerIP.txt" For Binary As #f
+		print #f,tmpHead
+		For i As Integer = 1 To 10
+			If this.serveraddresse(i)<>"" Then
+				Print #f,this.serveraddresse(i)+" "+Str(this.serverport(i))
+			Else
+				Print #f,""
+			EndIf
+		Next
+	Close #f
+	
+	If this.configValue.config(4).value=1 Then
+		'offline
+		this.serveraddresse(0)="127.0.0.1"
+		this.serverport(0)=9850
+		this.configvalue.config(6).value=0
+		Shell "start server.exe "+Str(this.serverport(0))
+	EndIf
+
+	
+End Sub
+
 Sub global_type.quit(temp_mx As Integer,temp_my As Integer,temp_mb As Integer)
 	Dim As Integer temp_x,temp_y
 	temp_x=710-11
@@ -123,9 +228,112 @@ Sub global_type.quit(temp_mx As Integer,temp_my As Integer,temp_mb As Integer)
 	Put (temp_x,temp_y),this.closeobj,Alpha
 	If temp_mx>temp_x+11 And temp_mx<temp_x+46 And temp_my>temp_y+11 And temp_my<temp_y+46 And temp_mb=1 Then
 		
-		
+		If this.configValue.config(4).value=1 Then Shell "taskkill /im server.exe /f"
+			
 		End
 	EndIf
+End Sub
+
+Sub global_type.configButton(temp_mx As Integer,temp_my As Integer,temp_mb As Integer)
+	Dim As Integer temp_x,temp_y
+	temp_x=710-11
+	temp_y=490-11
+	Put (temp_x,temp_y),this.configIcon,Alpha
+	If temp_mx>temp_x+11 And temp_mx<temp_x+46 And temp_my>temp_y+11 And temp_my<temp_y+46 And temp_mb=1 Then
+		this.configMenu
+	EndIf
+End Sub
+
+Sub global_type.configMenu
+	ScreenUnLock
+	ScreenUnLock
+	Dim As Integer mx,my,mr,mb,mb_release,changeServerConfig
+	this.configValue.load
+	Do
+		GetMouse mx,my,mr,mb
+		ScreenLock
+		Cls
+		Put (0,0),this.background
+		this.quit(mx,my,mb)
+		
+		Put  (((this.windowx-410)/2)+400+60-11-398,this.windowy/4-10+2+40-11),this.chattextBackground,Alpha
+
+		this.backButton.x_pos=((this.windowx-410)/2)-170+20
+		this.backButton.y_pos=this.windowy/4+313
+		this.backButton.draw
+		
+		
+		for i as Integer = 1 to this.configValue.MaxConfig
+			If this.configValue.config(i).title="" Then Continue For
+			
+			
+			If this.configValue.config(i).headline=1 Then
+				Draw String (((this.windowx-410)/2)+400+60-11-398+20,this.windowy/4-10+2+40-11+20+i*20),this.configValue.config(i).title
+				Line (((this.windowx-410)/2)+400+60-11-398+20,this.windowy/4-10+2+40-11+20+i*20+10)-(((this.windowx-410)/2)+400+60-11-398+20+(Len(this.configValue.config(i).title)*8),this.windowy/4-10+2+40-11+20+i*20+10)
+			EndIf
+			
+			If this.configValue.config(i).list=0 And this.configValue.config(i).headline=0 Then
+				Draw String (((this.windowx-410)/2)+400+60-11-398+20,this.windowy/4-10+2+40-11+20+i*20),this.configValue.config(i).title
+				Put (((this.windowx-410)/2)+400+60-11-398+20+130,this.windowy/4-10+2+40-11+20+i*20),this.tik(this.configValue.config(i).value),Alpha
+				If mb=1 And mb_release=0 Then
+					
+					If mx>((this.windowx-410)/2)+400+60-11-398+20+130 And mx<((this.windowx-410)/2)+400+60-11-398+20+130+15 Then
+						If my>this.windowy/4-10+2+40-11+20+i*20 And my<this.windowy/4-10+2+40-11+20+i*20+15 Then
+							If this.configValue.config(i).value=0 Then
+								this.configValue.config(i).value=1
+							Else
+								this.configValue.config(i).value=0
+							EndIf
+							mb_release=1
+						EndIf
+						
+					EndIf
+				End If
+				If mb=0 Then
+					mb_release=0
+				End If	
+				
+			ElseIf this.configValue.config(i).list=1 then
+				this.leftbutton.x_pos=((this.windowx-410)/2)+400+60-11-398+20
+				this.leftbutton.y_pos=this.windowy/4-10+2+40-11+20+i*20-2
+				this.rightbutton.x_pos=((this.windowx-410)/2)+400+60-11-398+20+130
+				this.rightbutton.y_pos=this.windowy/4-10+2+40-11+20+i*20-2
+				
+				this.leftbutton.draw
+				this.rightbutton.draw
+				
+				
+				If this.configValue.config(i).title="serverSelection" Then
+					'Server Auswahl
+					If this.leftbutton.klick=1 And mb_release=0 And This.serverAddresse(this.configValue.config(i).value-1)<>"" Then 
+						this.configValue.config(i).value-=1
+						mb_release=1 
+						changeServerConfig=1
+					EndIf
+					If this.rightbutton.klick=1 And mb_release=0 And This.serverAddresse(this.configValue.config(i).value+1)<>"" Then
+						this.configValue.config(i).value+=1
+						mb_release=1
+						changeServerConfig=1
+					EndIf
+					Draw String (((this.windowx-410)/2)+400+60-11-398+30,this.windowy/4-10+2+40-11+20+i*20),Mid(This.serverAddresse(this.configValue.config(i).value),1,15)
+					If mb=0 Then
+						mb_release=0
+					End If	
+				EndIf
+
+			EndIf
+			
+			
+		Next
+
+		this.window_move
+		
+		ScreenUnLock
+		Sleep 1,1
+		
+	Loop Until this.backbutton.klick=1
+	this.configValue.save
+	If changeServerConfig=1 Then this.verbindung
 End Sub
 
 Sub global_type.init
@@ -138,7 +346,9 @@ Sub global_type.init
 	table=ImageCreate(180,325)
 	logo=ImageCreate(600,200)
 	games=ImageCreate(180,60)
+
 	this.closeobj=ImageCreate(80,80)
+	this.configIcon=ImageCreate(80,80)
 
 	scrollBackground=ImageCreate(48,335)
 	chatBackground=ImageCreate(446,49)
@@ -155,13 +365,19 @@ Sub global_type.init
 	BLoad "player.bmp",player
 	BLoad "config.bmp",config
 	BLoad "close.bmp",this.closeobj
+	BLoad "configIcon.bmp",this.configIcon
 	BLoad "scroll.bmp",scrollBackground
 	BLoad "chat.bmp",chatBackground
 	BLoad "chatlittle.bmp",chatlittleBackground
 	BLoad "chatbg.bmp",chattextBackground
 	BLoad "hsc.bmp",hscBackground
 	BLoad "name.bmp",nameBackground
-	game(0).player_name(0)=this.input_name
+
+
+	this.tik(0)=ImageCreate(15,15)
+	this.tik(1)=ImageCreate(15,15)
+	BLoad "tik1.bmp",this.tik(0)
+	BLoad "tik2.bmp",this.tik(1)
 
 	this.startButton.height=60
 	this.startButton.width=180
@@ -200,10 +416,20 @@ Sub global_type.init
 	this.rightButton.obj=Imagecreate(this.rightButton.width,this.rightButton.height)
 	BLoad "right.bmp",this.rightbutton.obj
 	
+	
+	
+	this.getServerData
+	
+	game(0).player_name(0)=this.input_name	
 End Sub
 
 Sub global_type.window_move
-
+	If (1/(Timer-this.zeit)>this.MaxFps) Then
+		Do
+		Loop Until 1/(Timer-this.zeit)<this.MaxFps
+	EndIf
+	
+	this.zeit=Timer
   IF SCREENEVENT(@e) THEN
     SELECT CASE e.type
     CASE EVENT_MOUSE_BUTTON_PRESS
@@ -235,6 +461,7 @@ function global_type.input_name As String
 		Put (0,0),this.background
 		Put (128-15,189-17),this.logo,alpha
 		this.quit(mx,my,mb)
+		this.configButton(mx,my,mb)
 		
 		'Line ((this.windowx-410)/2+2+100,this.windowy/2-50)-(((this.windowx-410)/2)+420-2-100,this.windowy/2+20-50),RGB(90,90,90),bf
 		Put ((this.windowx)/2-90,this.windowy/2-50-11+150),this.nameBackground,alpha
@@ -305,6 +532,7 @@ Sub global_type.hsc
 		Cls
 		Put (0,0),this.background
 		this.quit(mx,my,mb)
+		this.configButton(mx,my,mb)
 		Put  (((this.windowx)/2)-225+11,this.windowy/4+32),this.hscBackground,Alpha
 
 		this.backButton.x_pos=((this.windowx-410)/2)-170+20
@@ -351,13 +579,20 @@ Sub global_type.chat
 	For g_i As Integer = 1 To 10
 		game(0).ready(g_i)=0
 	Next
+	
 	Do
+		
 		temp_zeit=timer
 		GetMouse mx,my,mr,mb
+		
 		ScreenLock
+		
+		
 		cls
 		Put (0,0),this.background
+	
 		this.quit(mx,my,mb)
+		this.configButton(mx,my,mb)
 		Dim As Integer temp_screen_y=40
 		Dim As Integer temp_screen_x=60
 
@@ -371,6 +606,9 @@ Sub global_type.chat
 		this.readyButton.x_pos=((this.windowx-410)/2)-170+temp_screen_x
 		this.readyButton.y_pos=this.windowy/4+313+temp_screen_y
 		
+		
+
+			
 		If game(0).enable=0 Then
 			this.CreateButton.draw
 		Else
@@ -463,6 +701,14 @@ Sub global_type.chat
 		Else
 			Put((this.windowx-410)/2-170+temp_screen_x-11,this.windowy/4+temp_screen_y-11),this.player,Alpha
 			Put((this.windowx-410)/2-170+temp_screen_x-11,this.windowy/4+temp_screen_y-11+150),this.config,Alpha
+		EndIf
+		
+		
+
+		
+		If game(0).enable<>0 Then
+
+			'----------------------------------------------------------------------
 			Draw String ((this.windowx-410)/2-170+temp_screen_x+5,this.windowy/4+temp_screen_y-11+202),"Max. Tiles:"
 			Draw String ((this.windowx-410)/2-170+temp_screen_x+105,this.windowy/4+temp_screen_y-11+202),Str(game(0).max_tile)
 			
@@ -474,13 +720,7 @@ Sub global_type.chat
 			If game(0).host=1 Then
 				this.leftbutton.draw
 				this.rightbutton.draw
-			EndIf
-		EndIf
-		
-		
-
-		
-		If game(0).enable<>0 Then
+			EndIf	
 			If game(0).ready(0)=0 And game(0).host=1 Then
 				If this.leftbutton.klick=1 Then 
 					game(0).max_tile-=1 
@@ -493,11 +733,39 @@ Sub global_type.chat
 					If game(0).max_tile>999 Then game(0).max_tile=999
 					Senddata(1,"conf",str(game(0).max_tile),"---","---",2,1,2,3)
 				EndIf
+			EndIf
+			'----------------------------------------------------------------------	
+			Draw String ((this.windowx-410)/2-170+temp_screen_x+5,this.windowy/4+temp_screen_y-11+202+20),"Daytime"
+			Draw String ((this.windowx-410)/2-170+temp_screen_x+105,this.windowy/4+temp_screen_y-11+202+20),Str(daytimealias(game(0).daytime))
+					
+			this.leftbutton.x_pos=(this.windowx-410)/2-170+temp_screen_x+90
+			this.leftbutton.y_pos=(this.windowy/4+temp_screen_y-11+200-2+20)
+			this.rightbutton.x_pos=(this.windowx-410)/2-170+temp_screen_x+140
+			this.rightbutton.y_pos=(this.windowy/4+temp_screen_y-11+200-2+20)
+
+			If game(0).host=1 Then
+				this.leftbutton.draw
+				this.rightbutton.draw
+			EndIf	
+			If game(0).ready(0)=0 And game(0).host=1 Then
+				If this.leftbutton.klick=1 Then 
+					game(0).daytime-=1 
+					If game(0).daytime<1 Then game(0).daytime=1
+					Senddata(1,"conf",str(game(0).daytime),"---","---",2,1,2,4)
+				EndIf
 				
+				If this.rightbutton.klick=1 Then
+					game(0).daytime+=1 
+					If game(0).daytime>2 Then game(0).daytime=2
+					Senddata(1,"conf",str(game(0).daytime),"---","---",2,1,2,4)
+			
+				EndIf
 				
 				
 				
 			End If
+			
+			
 			
 				For p_i As Integer = 1 To 10
 					'If game(0).player(p_i)<>0 Then
@@ -617,6 +885,26 @@ Sub global_type.chat
 End Sub
 
 Dim Shared As global_type global
+
+
+Sub game_type.start
+	
+	Dim As String ConfigParam
+	For i As Integer = 1 To 15
+		ConfigParam+=" "+Str(global.configValue.config(i).value)
+	Next
+	
+	Dim As String send_game_string="game"+Str(Len(Str(this.count)))+Str(this.count)+this.player_name(0)
+	Do
+	Loop Until this.set_start_game=1
+	this.set_start_game=0
+	ChDir("..")
+	
+	'Shell "start main.exe "+global.serverAddresse(global.configvalue.config(6).value)+" "+Str(global.serverPort(global.configvalue.config(6).value))+" "+send_game_string+" "+Str(this.daytime)+ConfigParam
+	Shell "start bin/main.exe "+global.serverAddresse(global.configvalue.config(6).value)+" "+Str(global.serverPort(global.configvalue.config(6).value))+" "+send_game_string+" "+Str(this.daytime)+ConfigParam
+
+	ChDir("resclient")
+End Sub
 
 Sub log_chat(input_msg As String)
 	Dim As Integer f=FreeFile
@@ -805,6 +1093,7 @@ Sub TSNEPlay_Data(ByVal V_FromPlayerID as UInteger, ByVal V_ToPlayerID as UInteg
 	
 	If dt_data(1)=5 Then
 		game(0).max_tile=Val(ds_data(2))
+		game(0).daytime=Val(ds_data(3))
 	EndIf
 	
 	
@@ -815,8 +1104,8 @@ Sub global_type.verbinden
 	
 	TSNEPlay_CloseAll()
 	
-	'RV = TSNEPlay_ConnectToServer("127.0.0.1", 9850, game(0).player_name(0),"",0,0,@TSNEPlay_Player_Disconnected,@TSNEPlay_Message,0,@TSNEPlay_Data)
-	RV = TSNEPlay_ConnectToServer("klingenbund.org", 9850, game(0).player_name(0), "",0,0,@TSNEPlay_Player_Disconnected,@TSNEPlay_Message,0,@TSNEPlay_Data)
+	RV = TSNEPlay_ConnectToServer(this.serverAddresse(global.configvalue.config(6).value),this.serverPort(global.configvalue.config(6).value), game(0).player_name(0),"",0,0,@TSNEPlay_Player_Disconnected,@TSNEPlay_Message,0,@TSNEPlay_Data)
+	'RV = TSNEPlay_ConnectToServer("klingenbund.org", 9850, game(0).player_name(0), "",0,0,@TSNEPlay_Player_Disconnected,@TSNEPlay_Message,0,@TSNEPlay_Data)
 	'If RV <> TSNEPlay_NoError Then Print "[ERROR] "; TSNEPlay_Desc_GetGuruCode(RV):' End -1
 End Sub
 
@@ -825,7 +1114,9 @@ global.init
 
 global.verbinden
 
+global.zeit=Timer
 Do
+	
 	global.chat
 	ScreenUnLock
 	game(0).start
