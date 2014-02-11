@@ -1,4 +1,4 @@
-Dim Shared As Integer thisVersion=1
+Dim Shared As Integer thisVersion=2
 #Include "test.bas"
 ScreenRes 400,250,32,,16
 Color 0,&Hff00ff  
@@ -209,7 +209,7 @@ For i As Integer = 1 To UBound(file)
 			EndIf
 		Next
 		
-		If file2do(i).titel<>"SnowManRun.exe" Xor file2do(i).version<>thisversion then 
+		If file2do(i).titel<>"SnowManRun.exe" then 
 			msg("update "+file2do(i).titel+" from version "+Str(file(i).version)+" to "+Str(file2do(i).version))
 			lR = URLDownloadToFile(0, file2do(i).url,file2do(i).pfad, 0, 0)
 			Do
