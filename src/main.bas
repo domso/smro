@@ -23,10 +23,11 @@ Do
 	player(0).gfx=0
 	If global.finish<>1 then
 		player(0).controlls(global.fs)
+		update_game
 	Elseif global.finish=1 Then
 		If player(0).finish_zeit=0 Then
 			player(0).finish_zeit=Timer-player(0).start_zeit
-			global.sendhsc(mid(global.param(2),7+Val(Mid(global.param(2),2,1))),Str(player(0).punkte),Str(player(0).meter),(player(0).finish_zeit),1)
+			global.sendhsc(mid(global.param(3),7+Val(Mid(global.param(3),2,1))),Str(player(0).punkte),Str(player(0).meter),(player(0).finish_zeit),1)
 		End If
 		'player(0).controlls(global.fs)
 		showEntity global.finishscreen
@@ -34,7 +35,7 @@ Do
 		turnEntity player(0).obj2,0,100*global.fs,0
 	End if
 	
-	update_game
+	
 	
    render_gfx
 	render_screen

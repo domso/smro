@@ -212,6 +212,7 @@ Sub global_type.getServerData
 	
 	If this.configValue.config(4).value=1 Then
 		'offline
+
 		this.serveraddresse(0)="127.0.0.1"
 		this.serverport(0)=9850
 		this.configvalue.config(6).value=0
@@ -418,6 +419,7 @@ Sub global_type.init
 	
 	
 	
+	this.configValue.load
 	this.getServerData
 	
 	game(0).player_name(0)=this.input_name	
@@ -898,12 +900,12 @@ Sub game_type.start
 	Do
 	Loop Until this.set_start_game=1
 	this.set_start_game=0
-	ChDir("..")
+	chdir("..")
 	
 	'Shell "start main.exe "+global.serverAddresse(global.configvalue.config(6).value)+" "+Str(global.serverPort(global.configvalue.config(6).value))+" "+send_game_string+" "+Str(this.daytime)+ConfigParam
 	Shell "start bin/main.exe "+global.serverAddresse(global.configvalue.config(6).value)+" "+Str(global.serverPort(global.configvalue.config(6).value))+" "+send_game_string+" "+Str(this.daytime)+ConfigParam
 
-	ChDir("resclient")
+	chdir("resclient")
 End Sub
 
 Sub log_chat(input_msg As String)
