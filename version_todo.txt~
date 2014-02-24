@@ -67,4 +67,3 @@
 67 configIcon.bmp 1 resclient/configIcon.bmp https://raw.github.com/domso/smro/master/resclient/configIcon.bmp 
 68 tik1.bmp 1 resclient/tik1.bmp https://raw.github.com/domso/smro/master/resclient/tik1.bmp 
 69 tik2.bmp 1 resclient/tik2.bmp https://raw.github.com/domso/smro/master/resclient/tik2.bmp 
-70 libOpenB3D.so 1 libOpenB3D.so https://raw.github.com/domso/smro/master/libOpenB3D.so  
