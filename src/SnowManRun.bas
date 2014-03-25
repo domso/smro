@@ -1,4 +1,4 @@
-Dim Shared As Integer thisVersion=2
+Dim Shared As Integer thisVersion=3
 #Include "test.bas"
 ScreenRes 400,250,32,,16
 Color 0,&Hff00ff  
