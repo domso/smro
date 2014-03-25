@@ -193,7 +193,7 @@ Sub global_type.getServerData
 	
 	If this.serveraddresse(1)="" Then
 		tmpHead="This is the serverList!"
-		this.serveraddresse(1)="klingenbund.org"
+		this.serveraddresse(1)="130.255.72.135"
 		this.serverport(1)=9850
 	EndIf
 	
