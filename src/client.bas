@@ -193,7 +193,7 @@ Sub global_type.getServerData
 	
 	If this.serveraddresse(1)="" Then
 		tmpHead="This is the serverList!"
-		this.serveraddresse(1)="klingenbund.org"
+		this.serveraddresse(1)="130.255.72.135"
 		this.serverport(1)=9850
 	EndIf
 	
@@ -216,7 +216,7 @@ Sub global_type.getServerData
 		this.serveraddresse(0)="127.0.0.1"
 		this.serverport(0)=9850
 		this.configvalue.config(6).value=0
-		Shell "start server.exe "+Str(this.serverport(0))
+		Shell "start bin/server.exe "+Str(this.serverport(0))
 	EndIf
 
 	
@@ -900,7 +900,7 @@ Sub game_type.start
 	Do
 	Loop Until this.set_start_game=1
 	this.set_start_game=0
-	chdir("..")
+	ChDir("..")
 	
 	'Shell "start main.exe "+global.serverAddresse(global.configvalue.config(6).value)+" "+Str(global.serverPort(global.configvalue.config(6).value))+" "+send_game_string+" "+Str(this.daytime)+ConfigParam
 	Shell "start bin/main.exe "+global.serverAddresse(global.configvalue.config(6).value)+" "+Str(global.serverPort(global.configvalue.config(6).value))+" "+send_game_string+" "+Str(this.daytime)+ConfigParam
@@ -1107,8 +1107,7 @@ Sub global_type.verbinden
 	TSNEPlay_CloseAll()
 	
 	RV = TSNEPlay_ConnectToServer(this.serverAddresse(global.configvalue.config(6).value),this.serverPort(global.configvalue.config(6).value), game(0).player_name(0),"",0,0,@TSNEPlay_Player_Disconnected,@TSNEPlay_Message,0,@TSNEPlay_Data)
-	'RV = TSNEPlay_ConnectToServer("klingenbund.org", 9850, game(0).player_name(0), "",0,0,@TSNEPlay_Player_Disconnected,@TSNEPlay_Message,0,@TSNEPlay_Data)
-	'If RV <> TSNEPlay_NoError Then Print "[ERROR] "; TSNEPlay_Desc_GetGuruCode(RV):' End -1
+
 End Sub
 
 

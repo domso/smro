@@ -232,6 +232,15 @@ For i As Integer = 1 To UBound(file)
 		updateVersion
 		
 		If file(i).titel="SnowManRun.exe" Then
+			msg("update "+file2do(i).titel+" from version "+Str(file(i).version)+" to "+Str(file2do(i).version))
+			lR = URLDownloadToFile(0, file2do(i).url,file2do(i).pfad, 0, 0)
+			Do
+				If MultiKey(1) Then
+					Exit for
+				EndIf
+			Loop until lR = 0 
+			
+			
 			'Patcher update!
 			If file2do(i).version<>thisVersion Then
 				msg("Client update!")
