@@ -11,6 +11,10 @@ Controlls:
 Use the Arrow-Keys to navigate your Snowman
 Use the Space-bar to jump
 
+Help:
+Connection Problems? -> Delete ServerIp.txt in resclient
+Update Problems? -> Reinstall game
+
 
 Further informations:
 
