@@ -1,0 +1,7 @@
+"12-12-2014||23:55:15 :> Initial server"
+"12-12-2014||23:55:15 :> Server online"
+"12-12-2014||23:55:18 :> Player connected: Domso || ID:2"
+"12-12-2014||23:56:19 :> Initial server"
+"12-12-2014||23:56:19 :> Server online"
+"12-12-2014||23:56:22 :> Player connected: Domso || ID:2"
+"12-12-2014||23:56:27 :> Player connected: game11Domso || ID:3"

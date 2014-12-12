@@ -1,0 +1,11 @@
+This is the serverList!
+85.25.192.29 9850
+
+
+
+
+
+
+
+
+

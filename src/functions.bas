@@ -45,87 +45,94 @@ Sub Senddata(player As Integer,data_send_1 As String,data_send_2 As String,data_
 	If anzahl_dt>=4 Then TSNE_Send_content+=str(data_type_4)
 	
 	
-	TSNEPlay_SendData(player,TSNE_Send_content)
+	TSNEPlay_SendData(player,TSNE_Send_content+"|||")
 
 
 End Sub
 
 Sub TSNEPlay_Data(ByVal V_FromPlayerID as UInteger, ByVal V_ToPlayerID as UInteger, ByRef V_Data as String)
-	
-	Dim As String ds_data(1 To 4)
-	Dim As Integer dt_data(1 To 4),anzahl_ds,anzahl_dt,aktu_stelle,ds_len(1 To 4),dt_len(1 To 4)
-	
-	
-	anzahl_ds=Val(Mid(V_data,1,1))
-	
-	
-	If anzahl_ds>=1 Then ds_len(1)=Val(Mid(V_data,2,1))
-	If anzahl_ds>=2 Then ds_len(2)=Val(Mid(V_data,3,1))
-	If anzahl_ds>=3 Then ds_len(3)=Val(Mid(V_data,4,1))
-	If anzahl_ds>=4 Then ds_len(4)=Val(Mid(V_data,5,1))
-	
-	
-	If anzahl_ds>=1 Then ds_data(1)=Mid(V_Data,2+anzahl_ds,ds_len(1))
-	aktu_stelle=ds_len(1)+2+anzahl_ds
-	If anzahl_ds>=2 Then ds_data(2)=Mid(V_Data,aktu_stelle,ds_len(2))
-	aktu_stelle+=ds_len(2)
-	If anzahl_ds>=3 Then ds_data(3)=Mid(V_Data,aktu_stelle,ds_len(3))
-	aktu_stelle+=ds_len(3)
-	If anzahl_ds>=4 Then ds_data(4)=Mid(V_Data,aktu_stelle,ds_len(4))
-	aktu_stelle+=ds_len(4)
-	
-	anzahl_dt=Val(Mid(v_data,aktu_stelle,1))
-	If anzahl_dt>=1 Then dt_len(1)=Val(Mid(v_data,aktu_stelle+1,1))
-	If anzahl_dt>=2 Then dt_len(2)=Val(Mid(v_data,aktu_stelle+2,1))
-	If anzahl_dt>=3 Then dt_len(3)=Val(Mid(v_data,aktu_stelle+3,1))
-	If anzahl_dt>=4 Then dt_len(4)=Val(Mid(v_data,aktu_stelle+4,1))
-	
-	If anzahl_dt>=1 Then dt_data(1)=Val(Mid(V_Data,aktu_stelle+anzahl_dt+1,dt_len(1)))
-	aktu_stelle+=dt_len(1)+anzahl_dt+1
-	If anzahl_dt>=2 Then dt_data(2)=Val(Mid(V_Data,aktu_stelle,dt_len(2)))
-	aktu_stelle+=dt_len(2)
-	If anzahl_dt>=3 Then dt_data(3)=Val(Mid(V_Data,aktu_stelle,dt_len(3)))
-	aktu_stelle+=dt_len(3)
-	If anzahl_dt>=4 Then dt_data(4)=Val(Mid(V_Data,aktu_stelle,dt_len(4)))
-	aktu_stelle+=dt_len(4)
-	
-	'####################################################################################
-	
-	If dt_data(1)=1 Then
-		If dt_data(2)=1 Then
-			If dt_data(3)=1 then
-				player(dt_data(4)).pos_x=Val(ds_data(2))/1000
-				player(dt_data(4)).pos_y=Val(ds_data(3))/1000
-				player(dt_data(4)).pos_z=Val(ds_data(4))/1000
-			End If
+		Dim As String tmpData
+		tmpData = V_Data
+	do
+		If Left(tmpData,3)="|||" Then tmpData = Mid(tmpData,4)
+		If tmpData = "" Then Return
+		If InStr(tmpData,"|||") = 0 Then return
+		tmpData = Mid(tmpData,1,InStr(tmpData,"|||")-1)
 			
-			If dt_data(3)=2 then
-				player(dt_data(4)).rot_x=Val(ds_data(2))
-				player(dt_data(4)).rot_y=Val(ds_data(3))
-				player(dt_data(4)).rot_z=Val(ds_data(4))
-			End If
-			
-			If dt_data(3)=3 Then
-				If dt_data(4)=1 Then
-					'If Asc(ds_data(2))=0 Or Asc(ds_data(2))>18 Then end
-					'If Asc(ds_data(3))=0 Or Asc(ds_data(3))>18 Then end
-					'If Asc(ds_data(4))=0 Or Asc(ds_data(4))>18 Then end
-					
-					global.world+=ds_data(2)
-					global.world+=ds_data(3)
-					global.world+=ds_data(4)
+		Dim As String ds_data(1 To 4)
+		Dim As Integer dt_data(1 To 4),anzahl_ds,anzahl_dt,aktu_stelle,ds_len(1 To 4),dt_len(1 To 4)
+		
+		
+		anzahl_ds=Val(Mid(tmpData,1,1))
+		
+		
+		If anzahl_ds>=1 Then ds_len(1)=Val(Mid(tmpData,2,1))
+		If anzahl_ds>=2 Then ds_len(2)=Val(Mid(tmpData,3,1))
+		If anzahl_ds>=3 Then ds_len(3)=Val(Mid(tmpData,4,1))
+		If anzahl_ds>=4 Then ds_len(4)=Val(Mid(tmpData,5,1))
+		
+		
+		If anzahl_ds>=1 Then ds_data(1)=Mid(tmpData,2+anzahl_ds,ds_len(1))
+		aktu_stelle=ds_len(1)+2+anzahl_ds
+		If anzahl_ds>=2 Then ds_data(2)=Mid(tmpData,aktu_stelle,ds_len(2))
+		aktu_stelle+=ds_len(2)
+		If anzahl_ds>=3 Then ds_data(3)=Mid(tmpData,aktu_stelle,ds_len(3))
+		aktu_stelle+=ds_len(3)
+		If anzahl_ds>=4 Then ds_data(4)=Mid(tmpData,aktu_stelle,ds_len(4))
+		aktu_stelle+=ds_len(4)
+		
+		anzahl_dt=Val(Mid(tmpData,aktu_stelle,1))
+		If anzahl_dt>=1 Then dt_len(1)=Val(Mid(tmpData,aktu_stelle+1,1))
+		If anzahl_dt>=2 Then dt_len(2)=Val(Mid(tmpData,aktu_stelle+2,1))
+		If anzahl_dt>=3 Then dt_len(3)=Val(Mid(tmpData,aktu_stelle+3,1))
+		If anzahl_dt>=4 Then dt_len(4)=Val(Mid(tmpData,aktu_stelle+4,1))
+		
+		If anzahl_dt>=1 Then dt_data(1)=Val(Mid(tmpData,aktu_stelle+anzahl_dt+1,dt_len(1)))
+		aktu_stelle+=dt_len(1)+anzahl_dt+1
+		If anzahl_dt>=2 Then dt_data(2)=Val(Mid(tmpData,aktu_stelle,dt_len(2)))
+		aktu_stelle+=dt_len(2)
+		If anzahl_dt>=3 Then dt_data(3)=Val(Mid(tmpData,aktu_stelle,dt_len(3)))
+		aktu_stelle+=dt_len(3)
+		If anzahl_dt>=4 Then dt_data(4)=Val(Mid(tmpData,aktu_stelle,dt_len(4)))
+		aktu_stelle+=dt_len(4)
+		
+		'####################################################################################
+		
+		If dt_data(1)=1 Then
+			If dt_data(2)=1 Then
+				If dt_data(3)=1 then
+					player(dt_data(4)).pos_x=Val(ds_data(2))/1000
+					player(dt_data(4)).pos_y=Val(ds_data(3))/1000
+					player(dt_data(4)).pos_z=Val(ds_data(4))/1000
+				End If
+				
+				If dt_data(3)=2 then
+					player(dt_data(4)).rot_x=Val(ds_data(2))
+					player(dt_data(4)).rot_y=Val(ds_data(3))
+					player(dt_data(4)).rot_z=Val(ds_data(4))
+				End If
+				
+				If dt_data(3)=3 Then
+					If dt_data(4)=1 Then
+						'If Asc(ds_data(2))=0 Or Asc(ds_data(2))>18 Then end
+						'If Asc(ds_data(3))=0 Or Asc(ds_data(3))>18 Then end
+						'If Asc(ds_data(4))=0 Or Asc(ds_data(4))>18 Then end
+						
+						global.world+=ds_data(2)
+						global.world+=ds_data(3)
+						global.world+=ds_data(4)
+						
+					EndIf
 					
 				EndIf
 				
-			EndIf
-			
-			If dt_data(3)=4 Then
-				global.ready=1
+				If dt_data(3)=4 Then
+					global.ready=1
+				EndIf
 			EndIf
 		EndIf
-	EndIf
 	
-	
+	loop
 End Sub
 
 
