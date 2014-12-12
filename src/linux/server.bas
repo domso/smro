@@ -129,7 +129,7 @@ sub Senddata(player As Integer,data_send_1 As string,data_send_2 As String,data_
 	If anzahl_dt>=4 Then TSNE_Send_content+=str(data_type_4)
 	
 	
-	TSNEPlay_SendData(player,TSNE_Send_content)
+	TSNEPlay_SendData(player,TSNE_Send_content+"|||")
 
 
 	
@@ -312,282 +312,294 @@ End Sub
 
 
 Sub TSNEPlay_Data(ByVal V_FromPlayerID as UInteger, ByVal V_ToPlayerID as UInteger, ByRef V_Data as String)
-	Dim As String ds_data(1 To 4)
-	Dim As Integer dt_data(1 To 4),anzahl_ds,anzahl_dt,aktu_stelle,ds_len(1 To 4),dt_len(1 To 4)
+		
+	Dim As String tmpData
+	tmpData = V_Data
+	Do
+		If Left(tmpData,3)="|||" Then tmpData = Mid(tmpData,4)
+		If tmpData = "" Then Return
+		If InStr(tmpData,"|||") = 0 Then return
+		tmpData = Mid(tmpData,1,InStr(tmpData,"|||")-1)
+		'
 	
-	anzahl_ds=Val(Mid(V_data,1,1))
-	
-	
-	If anzahl_ds>=1 Then ds_len(1)=Val(Mid(V_data,2,1))
-	If anzahl_ds>=2 Then ds_len(2)=Val(Mid(V_data,3,1))
-	If anzahl_ds>=3 Then ds_len(3)=Val(Mid(V_data,4,1))
-	If anzahl_ds>=4 Then ds_len(4)=Val(Mid(V_data,5,1))
-	
-	
-	If anzahl_ds>=1 Then ds_data(1)=Mid(V_Data,2+anzahl_ds,ds_len(1))
-	aktu_stelle=ds_len(1)+2+anzahl_ds
-	If anzahl_ds>=2 Then ds_data(2)=Mid(V_Data,aktu_stelle,ds_len(2))
-	aktu_stelle+=ds_len(2)
-	If anzahl_ds>=3 Then ds_data(3)=Mid(V_Data,aktu_stelle,ds_len(3))
-	aktu_stelle+=ds_len(3)
-	If anzahl_ds>=4 Then ds_data(4)=Mid(V_Data,aktu_stelle,ds_len(4))
-	aktu_stelle+=ds_len(4)
-	
-	anzahl_dt=Val(Mid(v_data,aktu_stelle,1))
-	If anzahl_dt>=1 Then dt_len(1)=Val(Mid(v_data,aktu_stelle+1,1))
-	If anzahl_dt>=2 Then dt_len(2)=Val(Mid(v_data,aktu_stelle+2,1))
-	If anzahl_dt>=3 Then dt_len(3)=Val(Mid(v_data,aktu_stelle+3,1))
-	If anzahl_dt>=4 Then dt_len(4)=Val(Mid(v_data,aktu_stelle+4,1))
-	
-	If anzahl_dt>=1 Then dt_data(1)=Val(Mid(V_Data,aktu_stelle+anzahl_dt+1,dt_len(1)))
-	aktu_stelle+=dt_len(1)+anzahl_dt+1
-	If anzahl_dt>=2 Then dt_data(2)=Val(Mid(V_Data,aktu_stelle,dt_len(2)))
-	aktu_stelle+=dt_len(2)
-	If anzahl_dt>=3 Then dt_data(3)=Val(Mid(V_Data,aktu_stelle,dt_len(3)))
-	aktu_stelle+=dt_len(3)
-	If anzahl_dt>=4 Then dt_data(4)=Val(Mid(V_Data,aktu_stelle,dt_len(4)))
-	aktu_stelle+=dt_len(4)
-	
-	'####################################################################################
-	
-	Dim As string temp_send_item(1 To 3)
-	If dt_data(1)=1 Then 'programm
-		If dt_data(2)=1 Then
-			If dt_data(3)=1 Then
-				If dt_data(4)=1 Then
-					For i As Integer = 1 To UBound(game)
-						For j As Integer = 1 To 10
-							If game(i).game_playerID(j)=V_FromPlayerID Then
-								For k As Integer = 1 To 10
-									If j<>k And game(i).game_playerID(k)<>0 Then
-										Senddata(game(i).game_playerID(k),ds_data(1),ds_data(2),ds_data(3),ds_data(4),1,1,1,k)
-									EndIf
-								Next
-								
-								Exit sub
-							EndIf
-						Next
-					Next
-				EndIf
-				
-				If dt_data(4)=2 Then
-					For i As Integer = 1 To UBound(game)
-						For j As Integer = 1 To 10
-							If game(i).game_playerID(j)=V_FromPlayerID Then
-								For k As Integer = 1 To 10
-									If j<>k And game(i).game_playerID(k)<>0 Then
-										Senddata(game(i).game_playerID(k),ds_data(1),ds_data(2),ds_data(3),ds_data(4),1,1,2,k)
-									EndIf
-								Next
-								
-								Exit sub
-							EndIf
-						Next
-					Next
-				EndIf
-			ElseIf dt_data(3)=2 Then
-				If dt_data(4)=1 Then
-					For i As Integer = 1 To UBound(game)
-						For j As Integer = 1 To 10
-							If game(i).game_playerID(j)=V_FromPlayerID Then
-								
-								
-								temp_send_item(1)=Chr(Int(Rnd*anzahl_tile)+1)
-								If game(i).aktu_len+1>=game(i).max_len Then temp_send_item(1)=Chr(0)
-								game(i).aktu_len+=1
-								temp_send_item(2)=Chr(Int(Rnd*anzahl_tile)+1)
-								If game(i).aktu_len+1>=game(i).max_len Then temp_send_item(2)=Chr(0)
-								game(i).aktu_len+=1
-								temp_send_item(3)=Chr(Int(Rnd*anzahl_tile)+1)
-								If game(i).aktu_len+1>=game(i).max_len Then temp_send_item(3)=Chr(0)
-								game(i).aktu_len+=1
-								
-								
-								
-								For k As Integer = 1 To 10
-									If game(i).game_playerID(k)<>0 Then
-										Senddata(game(i).game_playerID(k),ds_data(1),temp_send_item(1),temp_send_item(2),temp_send_item(3),1,1,3,1)
-									EndIf
-								Next
-								
-								Exit sub
-							EndIf
-						Next
-					Next
-				EndIf
-			EndIf
-		EndIf
-	
-		If dt_data(2)=2 Then
-			If dt_data(3)=1 Then
-				If dt_data(4)=1 Then
-					For i As Integer = 1 To UBound(game)
-						For j As Integer = 1 To 10
-							If game(i).game_playerID(j)=V_FromPlayerID Then
-								game(i).game_player_ready(j)=1
-								
-								For k As Integer = 1 To 10
-									If game(i).player(k)<>0 Then
-										If game(i).player_ready(k)<>game(i).game_player_ready(k) Then
-											Exit Sub
-										End If
-									EndIf
-								Next
-								For k As Integer = 1 To 10
-									If game(i).game_playerID(k)<>0 Then 
-										Senddata(game(i).game_playerID(k),ds_data(1),ds_data(2),ds_data(3),ds_data(4),1,1,4,k)
-									EndIf
-								Next
-								Exit sub
-							EndIf
-						Next			
-					next
-				EndIf
-			EndIf
-		EndIf	
-
-		If dt_data(2)=3 Then
-			If dt_data(3)=1 Then
-				If dt_data(4)=1 Then 
-					For i As Integer = 1 To UBound(game)
-						For j As Integer = 1 To 10
-							If game(i).game_playerID(j)=V_FromPlayerID Then 'hsc
-								'Print ds_data(4)
-								
-								If game(i).hsc.new_score(Val(ds_data(4)))=0 Then Exit sub 
-								'Print "a"
-								game(i).hsc.edit_score(Val(ds_data(2)),ds_data(1),Val(ds_data(4)),game(i).hsc.new_score(Val(ds_data(4))))
-								'Print "b"
-									For hsc_i As Integer = 1 To 10
-										If game(i).player_ID(hsc_i)<>0 Then 
-											For hsc_j As Integer = 1 To 10
-												Senddata(game(i).player_ID(hsc_i),game(i).hsc.player_name(hsc_j),Str(game(i).hsc.score(hsc_j)),"",Str(game(i).hsc.game_time(hsc_j)),4,3,1,hsc_j)
-											Next											
+		
+		Dim As String ds_data(1 To 4)
+		Dim As Integer dt_data(1 To 4),anzahl_ds,anzahl_dt,aktu_stelle,ds_len(1 To 4),dt_len(1 To 4)
+		
+		anzahl_ds=Val(Mid(tmpData,1,1))
+		
+		
+		If anzahl_ds>=1 Then ds_len(1)=Val(Mid(tmpData,2,1))
+		If anzahl_ds>=2 Then ds_len(2)=Val(Mid(tmpData,3,1))
+		If anzahl_ds>=3 Then ds_len(3)=Val(Mid(tmpData,4,1))
+		If anzahl_ds>=4 Then ds_len(4)=Val(Mid(tmpData,5,1))
+		
+		
+		If anzahl_ds>=1 Then ds_data(1)=Mid(tmpData,2+anzahl_ds,ds_len(1))
+		aktu_stelle=ds_len(1)+2+anzahl_ds
+		If anzahl_ds>=2 Then ds_data(2)=Mid(tmpData,aktu_stelle,ds_len(2))
+		aktu_stelle+=ds_len(2)
+		If anzahl_ds>=3 Then ds_data(3)=Mid(tmpData,aktu_stelle,ds_len(3))
+		aktu_stelle+=ds_len(3)
+		If anzahl_ds>=4 Then ds_data(4)=Mid(tmpData,aktu_stelle,ds_len(4))
+		aktu_stelle+=ds_len(4)
+		
+		anzahl_dt=Val(Mid(tmpData,aktu_stelle,1))
+		If anzahl_dt>=1 Then dt_len(1)=Val(Mid(tmpData,aktu_stelle+1,1))
+		If anzahl_dt>=2 Then dt_len(2)=Val(Mid(tmpData,aktu_stelle+2,1))
+		If anzahl_dt>=3 Then dt_len(3)=Val(Mid(tmpData,aktu_stelle+3,1))
+		If anzahl_dt>=4 Then dt_len(4)=Val(Mid(tmpData,aktu_stelle+4,1))
+		
+		If anzahl_dt>=1 Then dt_data(1)=Val(Mid(tmpData,aktu_stelle+anzahl_dt+1,dt_len(1)))
+		aktu_stelle+=dt_len(1)+anzahl_dt+1
+		If anzahl_dt>=2 Then dt_data(2)=Val(Mid(tmpData,aktu_stelle,dt_len(2)))
+		aktu_stelle+=dt_len(2)
+		If anzahl_dt>=3 Then dt_data(3)=Val(Mid(tmpData,aktu_stelle,dt_len(3)))
+		aktu_stelle+=dt_len(3)
+		If anzahl_dt>=4 Then dt_data(4)=Val(Mid(tmpData,aktu_stelle,dt_len(4)))
+		aktu_stelle+=dt_len(4)
+		
+		'####################################################################################
+		
+		Dim As string temp_send_item(1 To 3)
+		If dt_data(1)=1 Then 'programm
+			If dt_data(2)=1 Then
+				If dt_data(3)=1 Then
+					If dt_data(4)=1 Then
+						For i As Integer = 1 To UBound(game)
+							For j As Integer = 1 To 10
+								If game(i).game_playerID(j)=V_FromPlayerID Then
+									For k As Integer = 1 To 10
+										If j<>k And game(i).game_playerID(k)<>0 Then
+											Senddata(game(i).game_playerID(k),ds_data(1),ds_data(2),ds_data(3),ds_data(4),1,1,1,k)
 										EndIf
+									Next
+									
+									Exit sub
+								EndIf
+							Next
+						Next
+					EndIf
+					
+					If dt_data(4)=2 Then
+						For i As Integer = 1 To UBound(game)
+							For j As Integer = 1 To 10
+								If game(i).game_playerID(j)=V_FromPlayerID Then
+									For k As Integer = 1 To 10
+										If j<>k And game(i).game_playerID(k)<>0 Then
+											Senddata(game(i).game_playerID(k),ds_data(1),ds_data(2),ds_data(3),ds_data(4),1,1,2,k)
+										EndIf
+									Next
+									
+									Exit sub
+								EndIf
+							Next
+						Next
+					EndIf
+				ElseIf dt_data(3)=2 Then
+					If dt_data(4)=1 Then
+						For i As Integer = 1 To UBound(game)
+							For j As Integer = 1 To 10
+								If game(i).game_playerID(j)=V_FromPlayerID Then
+									
+									
+									temp_send_item(1)=Chr(Int(Rnd*anzahl_tile)+1)
+									If game(i).aktu_len+1>=game(i).max_len Then temp_send_item(1)=Chr(0)
+									game(i).aktu_len+=1
+									temp_send_item(2)=Chr(Int(Rnd*anzahl_tile)+1)
+									If game(i).aktu_len+1>=game(i).max_len Then temp_send_item(2)=Chr(0)
+									game(i).aktu_len+=1
+									temp_send_item(3)=Chr(Int(Rnd*anzahl_tile)+1)
+									If game(i).aktu_len+1>=game(i).max_len Then temp_send_item(3)=Chr(0)
+									game(i).aktu_len+=1
+									
+									
+									
+									For k As Integer = 1 To 10
+										If game(i).game_playerID(k)<>0 Then
+											Senddata(game(i).game_playerID(k),ds_data(1),temp_send_item(1),temp_send_item(2),temp_send_item(3),1,1,3,1)
+										EndIf
+									Next
+									
+									Exit sub
+								EndIf
+							Next
+						Next
+					EndIf
+				EndIf
+			EndIf
+		
+			If dt_data(2)=2 Then
+				If dt_data(3)=1 Then
+					If dt_data(4)=1 Then
+						For i As Integer = 1 To UBound(game)
+							For j As Integer = 1 To 10
+								If game(i).game_playerID(j)=V_FromPlayerID Then
+									game(i).game_player_ready(j)=1
+									
+									For k As Integer = 1 To 10
+										If game(i).player(k)<>0 Then
+											If game(i).player_ready(k)<>game(i).game_player_ready(k) Then
+												Exit Sub
+											End If
+										EndIf
+									Next
+									For k As Integer = 1 To 10
+										If game(i).game_playerID(k)<>0 Then 
+											Senddata(game(i).game_playerID(k),ds_data(1),ds_data(2),ds_data(3),ds_data(4),1,1,4,k)
+										EndIf
+									Next
+									Exit sub
+								EndIf
+							Next			
+						next
+					EndIf
+				EndIf
+			EndIf	
+	
+			If dt_data(2)=3 Then
+				If dt_data(3)=1 Then
+					If dt_data(4)=1 Then 
+						For i As Integer = 1 To UBound(game)
+							For j As Integer = 1 To 10
+								If game(i).game_playerID(j)=V_FromPlayerID Then 'hsc
+									'Print ds_data(4)
+									
+									If game(i).hsc.new_score(Val(ds_data(4)))=0 Then Exit sub 
+									'Print "a"
+									game(i).hsc.edit_score(Val(ds_data(2)),ds_data(1),Val(ds_data(4)),game(i).hsc.new_score(Val(ds_data(4))))
+									'Print "b"
+										For hsc_i As Integer = 1 To 10
+											If game(i).player_ID(hsc_i)<>0 Then 
+												For hsc_j As Integer = 1 To 10
+													Senddata(game(i).player_ID(hsc_i),game(i).hsc.player_name(hsc_j),Str(game(i).hsc.score(hsc_j)),"",Str(game(i).hsc.game_time(hsc_j)),4,3,1,hsc_j)
+												Next											
+											EndIf
+											
+										Next
+									'Print "c"
+									
+									
+									Exit sub
+								EndIf
+							Next			
+						Next		
+					EndIf
+				EndIf
+			EndIf
+		
+		EndIf
+		
+		If dt_data(1)=2 Then 'client
+			If dt_data(2)=1 Then
+				If dt_data(3)=1 Then
+					If dt_data(4)=0 Then
+	
+						For gi As Integer = 1 To UBound(game)
+							If game(gi).enable=0 then
+								For i As Integer = 1 To 10
+									If game(gi).player(i)=0 Then
+										For j As Integer = 1 To UBound(player)
+											If player(j).id=V_FromPlayerID Then
+													game(gi).set_ready=0
+												For l As Integer = 1 To 10											
+													game(gi).player(l)=0
+													game(gi).player_ready(l)=0
+													game(gi).game_playerID(l)=0
+													game(gi).game_player_ready(l)=0
+													game(gi).player_ID(l)=0
+	 												game(gi).hsc.score(l)=0
+													game(gi).hsc.game_time(l)=0
+													game(gi).hsc.player_name(l)=""
+												Next
+												game(gi).player(i)=j
+												game(gi).player_id(i)=V_FromPlayerID
+												game(gi).title=ds_data(2)
+												Senddata(V_FromPlayerID,ds_data(1),game(gi).title,"","",2,1,1,gi)
+												game(gi).enable=1
+												'Print "Game"+Str(gi)+" created with player:"+Str(i)
+												Exit sub
+											EndIf
+										Next
+				
+									EndIf
+								Next
+							End If
+						next
+					Else	
+						For i As Integer = 1 To 10
+							If game(dt_data(4)).player(i)=0 Then
+								For j As Integer = 1 To UBound(player)
+									If player(j).id=V_FromPlayerID Then
+										game(dt_data(4)).player(i)=j
+										game(dt_data(4)).player_id(i)=V_FromPlayerID
+										Senddata(V_FromPlayerID,ds_data(1),"","","",2,1,1,dt_data(4))
+										game(dt_data(4)).enable=1
 										
-									Next
-								'Print "c"
-								
-								
-								Exit sub
+										'Print "Game"+Str(dt_data(4))+" joined player:"+Str(i)
+										Exit sub
+									EndIf
+								Next
+		
 							EndIf
-						Next			
-					Next		
+						Next					
+					EndIf
+				ElseIf dt_data(3)=2 Then
+					If dt_data(4)=1 Then
+						For gi As Integer = 1 To UBound(game)
+							If game(gi).enable=1 then
+								For i As Integer = 1 To 10
+									If game(gi).player(i)<>0 And game(gi).player_id(i)=V_FromPlayerID Then
+										game(gi).player_ready(i)=1
+										
+										Exit sub
+									EndIf
+								Next
+							End If
+						Next
+					ElseIf dt_data(4)=2 Then
+						For gi As Integer = 1 To UBound(game)
+							If game(gi).enable=1 then
+								For i As Integer = 1 To 10
+									If game(gi).player(i)<>0 And game(gi).player_id(i)=V_FromPlayerID Then
+										game(gi).set_ready=2
+										Exit sub
+									EndIf
+								Next
+							End If
+						Next
+					ElseIf dt_data(4)=3 Then
+						For gi As Integer = 1 To UBound(game)
+							If game(gi).enable=1 then
+								For i As Integer = 1 To 10
+									If game(gi).player(i)<>0 And game(gi).player_id(i)=V_FromPlayerID Then
+										If ds_data(2)<>"" Then game(gi).max_len=Val(ds_data(2))
+					
+										
+										Exit sub
+									EndIf
+								Next
+							End If
+						Next
+					ElseIf dt_data(4)=4 Then
+						For gi As Integer = 1 To UBound(game)
+							If game(gi).enable=1 then
+								For i As Integer = 1 To 10
+									If game(gi).player(i)<>0 And game(gi).player_id(i)=V_FromPlayerID Then
+										If ds_data(2)<>"" Then game(gi).daytime=Val(ds_data(2))
+					
+										
+										Exit sub
+									EndIf
+								Next
+							End If
+						Next	
+					EndIf
 				EndIf
 			EndIf
 		EndIf
-	
-	EndIf
-	
-	If dt_data(1)=2 Then 'client
-		If dt_data(2)=1 Then
-			If dt_data(3)=1 Then
-				If dt_data(4)=0 Then
 
-					For gi As Integer = 1 To UBound(game)
-						If game(gi).enable=0 then
-							For i As Integer = 1 To 10
-								If game(gi).player(i)=0 Then
-									For j As Integer = 1 To UBound(player)
-										If player(j).id=V_FromPlayerID Then
-												game(gi).set_ready=0
-											For l As Integer = 1 To 10											
-												game(gi).player(l)=0
-												game(gi).player_ready(l)=0
-												game(gi).game_playerID(l)=0
-												game(gi).game_player_ready(l)=0
-												game(gi).player_ID(l)=0
- 												game(gi).hsc.score(l)=0
-												game(gi).hsc.game_time(l)=0
-												game(gi).hsc.player_name(l)=""
-											Next
-											game(gi).player(i)=j
-											game(gi).player_id(i)=V_FromPlayerID
-											game(gi).title=ds_data(2)
-											Senddata(V_FromPlayerID,ds_data(1),game(gi).title,"","",2,1,1,gi)
-											game(gi).enable=1
-											'Print "Game"+Str(gi)+" created with player:"+Str(i)
-											Exit sub
-										EndIf
-									Next
-			
-								EndIf
-							Next
-						End If
-					next
-				Else	
-					For i As Integer = 1 To 10
-						If game(dt_data(4)).player(i)=0 Then
-							For j As Integer = 1 To UBound(player)
-								If player(j).id=V_FromPlayerID Then
-									game(dt_data(4)).player(i)=j
-									game(dt_data(4)).player_id(i)=V_FromPlayerID
-									Senddata(V_FromPlayerID,ds_data(1),"","","",2,1,1,dt_data(4))
-									game(dt_data(4)).enable=1
-									
-									'Print "Game"+Str(dt_data(4))+" joined player:"+Str(i)
-									Exit sub
-								EndIf
-							Next
-	
-						EndIf
-					Next					
-				EndIf
-			ElseIf dt_data(3)=2 Then
-				If dt_data(4)=1 Then
-					For gi As Integer = 1 To UBound(game)
-						If game(gi).enable=1 then
-							For i As Integer = 1 To 10
-								If game(gi).player(i)<>0 And game(gi).player_id(i)=V_FromPlayerID Then
-									game(gi).player_ready(i)=1
-									
-									Exit sub
-								EndIf
-							Next
-						End If
-					Next
-				ElseIf dt_data(4)=2 Then
-					For gi As Integer = 1 To UBound(game)
-						If game(gi).enable=1 then
-							For i As Integer = 1 To 10
-								If game(gi).player(i)<>0 And game(gi).player_id(i)=V_FromPlayerID Then
-									game(gi).set_ready=2
-									Exit sub
-								EndIf
-							Next
-						End If
-					Next
-				ElseIf dt_data(4)=3 Then
-					For gi As Integer = 1 To UBound(game)
-						If game(gi).enable=1 then
-							For i As Integer = 1 To 10
-								If game(gi).player(i)<>0 And game(gi).player_id(i)=V_FromPlayerID Then
-									If ds_data(2)<>"" Then game(gi).max_len=Val(ds_data(2))
-				
-									
-									Exit sub
-								EndIf
-							Next
-						End If
-					Next
-				ElseIf dt_data(4)=4 Then
-					For gi As Integer = 1 To UBound(game)
-						If game(gi).enable=1 then
-							For i As Integer = 1 To 10
-								If game(gi).player(i)<>0 And game(gi).player_id(i)=V_FromPlayerID Then
-									If ds_data(2)<>"" Then game(gi).daytime=Val(ds_data(2))
-				
-									
-									Exit sub
-								EndIf
-							Next
-						End If
-					Next	
-				EndIf
-			EndIf
-		EndIf
-	EndIf
-	
+	loop
 
 End Sub
 Dim As Integer ServerPort=9850

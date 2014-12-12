@@ -178,7 +178,7 @@ Sub global_type.getServerData
 
 	Open "ServerIP.txt" For Binary As #f
 		Input #f,tmpHead
-		For i As Integer = 1 To 10
+		For i As Integer = 2 To 10
 			Input #f,tmpRead
 			For j As Integer = 0 To Len(tmpread)
 				If Mid(tmpread,j,1)=" " Then

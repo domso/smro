@@ -50,46 +50,8 @@ End Type
 Dim Shared RV as TSNEPlay_GURUCode
 Declare Sub TSNEPlay_Data(ByVal V_FromPlayerID as UInteger, ByVal V_ToPlayerID as UInteger, ByRef V_Data as String)
 
-
-Sub getScreenResolution(byref windowX as integer,byref windowY as integer)
-	Dim as string Input_string
-	Dim as integer f=freefile,found
-	open pipe "xrandr | grep '*'" for input as #f
-				Line Input #f,Input_string
-				for i as integer = 0 to len(input_string)
-					if input_string[i]<>asc(" ") then 
-						for j as integer = i+1 to len(input_string)
-							if input_string[j]=asc("x") then 
-								windowX=val(mid(input_string,i+1,j-i))
-								found=j+1
-								exit for
-							end if		
-							
-						next
-					end if	
-					if found<>0 then exit for		
-				next
-		
-				for i as integer = found to len(input_string)
-					if input_string[i]<>asc(" ") then 
-
-								windowY=val(mid(input_string,found+1,i))
-								exit for
-					end if	
-			
-				next
-
-
-	close #1
-end sub
-
 Sub global_type.init
-	'ScreenInfo this.windowx,this.windowy 
-	getScreenResolution(this.windowx,this.windowy)
-
-
-
-
+	ScreenInfo this.windowx,this.windowy 
 	param(1)=Command(1)
 	param(2)=Command(2)
 	param(3)=Command(3)
@@ -212,7 +174,6 @@ End Sub
 
 Sub global_type.sendhsc(hsc_name As String,hsc_punkte As String, hsc_meter As String, hsc_time As double,force As integer)
 	'Senddata(1,,,,,1,3,1,1)
-	
 	Senddata(1,hsc_name,hsc_punkte,"0",Mid(Str(Cast(Integer,hsc_time*1000)),1,9),1,3,1,1)
 
 End Sub

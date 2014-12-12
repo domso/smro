@@ -1,11 +1,10 @@
-
 Randomize Timer
 ChDir("resgame")
 '###2d teil###
+
 #Include "openb3d.bi"
 '#Define render_opengl
 '#Include "2d.bi"
-
 #Include "TSNEplay_V3.bi" 
 #Include "type.bas"
 #Include "functions.bas"
@@ -46,4 +45,4 @@ Loop Until MultiKey(1)
 
 
 
-end
+End
