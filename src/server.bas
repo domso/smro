@@ -2,7 +2,7 @@
 Randomize timer
 Declare Sub Senddata(player As Integer,data_send_1 As string,data_send_2 As String,data_send_3 As String,data_send_4 As String,data_type_1 As Integer,data_type_2 As Integer,data_type_3 As Integer,data_type_4 As Integer)
 Dim Shared RV as TSNEPlay_GURUCode
-Dim Shared As Integer anzahl_tile=25
+Dim Shared As Integer anzahl_tile=24
 Type player_type
 	As String nickname
 	As Integer online,id,game

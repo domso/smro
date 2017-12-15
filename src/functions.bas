@@ -149,20 +149,27 @@ Sub load_game(lvl As Integer)
 	'If global.finish=1 Then Exit sub
 
 	Dim As String text
-	For i As Integer = 1 To 1
-		global.item_belegt(lvl,i)=1
-		global.item(lvl,i)=copyEntity(item(global.item_belegt(lvl,i)).obj)
-		positionEntity global.item(lvl,i),global.tile_x-5+Int(Rnd*10),+Int(Rnd*5),global.tile_z-5+Int(Rnd*10)
-	Next
+
 	For i As Integer= 1 To 2
 		If Mid(global.world,1,1)<>"" And Mid(global.world,1,1)<>"0" And global.finish=0 Then
 			global.tile_belegt(lvl,i)=Asc(Mid(global.world,1,1)) 'int(Rnd*anzahl_tile)+1
-			If Asc(Mid(global.world,1,1))=0 Then global.finish=3
+
 			global.world=Mid(global.world,2)
 			
 			
 			 
 			global.tile(lvl,i)=copyEntity(tile(global.tile_belegt(lvl,i)).obj)
+
+			If global.tile_belegt(lvl,i)=0 Then 
+				global.finish=3
+				global.finish_tile = createCube
+				scaleEntity global.finish_tile, 1, 30, 41
+				moveEntity global.finish_tile, -70, 30, 0
+				EntityType global.finish_tile,2
+				entityparent global.finish_tile, global.tile(lvl,i)
+				EntityAlpha global.finish_tile, 0
+			EndIf
+			
 			global.finishTileMesh=global.tile(lvl,i)
 			EntityFx global.tile(lvl,i),16
 			player(0).aktu_world=lvl
@@ -170,10 +177,19 @@ Sub load_game(lvl As Integer)
 		
 			If tile(global.tile_belegt(lvl,i)).typ=1 Then 
 				turnEntity global.tile(lvl,i),0,(global.tile_rot),0
+				If i = 1 Then
+					global.resetRotNew = (global.tile_rot)-90
+				EndIf
 			ElseIf tile(global.tile_belegt(lvl,i)).typ=2 Then
 				turnEntity global.tile(lvl,i),0,(global.tile_rot),0
+				If i = 1 Then
+					global.resetRotNew = (global.tile_rot)-90
+				EndIf				
 			ElseIf tile(global.tile_belegt(lvl,i)).typ=3 then
 				turnEntity global.tile(lvl,i),0,-(global.tile_rot),0
+				If i = 1 Then
+					global.resetRotNew = (global.tile_rot)-90
+				EndIf
 			EndIf
 			positionEntity global.tile(lvl,i),global.tile_x,0,global.tile_z
 			global.tile_z-=((Sin(((global.tile_rot)/(180/(ACos(0)*2)))-tile(global.tile_belegt(lvl,i)).w1))*tile(global.tile_belegt(lvl,i)).len1)
@@ -187,8 +203,16 @@ Sub load_game(lvl As Integer)
 			
 		EndIf
 	
-	Next			
-
+	Next	
+	
+	For i As Integer = 1 To 1
+		If global.finish = 0 Then
+			global.item_belegt(lvl,i)=1
+			global.item(lvl,i)=copyEntity(item(global.item_belegt(lvl,i)).obj)
+			positionEntity global.item(lvl,i),global.tile_x-5+Int(Rnd*10),+Int(Rnd*5),global.tile_z-5+Int(Rnd*10)
+		End if
+	Next
+	
 End Sub
 
 Sub update_game
@@ -209,20 +233,28 @@ Sub update_game
 					freeEntity global.item(i,j)
 					global.item_belegt(i,j)=0
 					player(0).modi+=1
-					If global.finish=2 And Asc(Mid(global.world,1,1))=0 Then global.finish=1
-					If global.finish=0 Then player(0).punkte+=1
+					'If global.finish=2 And Asc(Mid(global.world,1,1))=0 Then global.finish=1
+					'If global.finish=0 Then player(0).punkte+=1
 					
 					
 				End if
 			EndIf	
 		Next
 	Next
+	
 
 	For col As Integer = 1 To countcollisions(player(0).obj)
 		mesh_col=CollisionEntity(player(0).obj,col)	
-		If mesh_col<>0 And global.finish=3 Then
-			If global.finishTileMesh=mesh_col Then global.finish=2
+		'If mesh_col<>0  Then
+			'If global.finishTileMesh=mesh_col Then global.finish=2
+		
+		If mesh_col = global.finish_tile Then
+			global.finish = 1
+			hideEntity global.finish_tile
 		EndIf
+			
+			
+		'EndIf
 		
 		If global.tile(player(0).aktu_world,1)=mesh_col Or global.tile(player(0).aktu_world,2)=mesh_col Or global.tile(player(0).aktu_world,3)=mesh_col Then
 			If player(0).aktu_world=1 Then 
@@ -241,16 +273,27 @@ Sub update_game
 				global.tile(2,2)=createMesh
 				global.tile(2,3)=createMesh
 				
+		  		
+  		
 		
 				
 				
 				If global.item_belegt(2,1)<>0 Then freeEntity global.item(2,1)
+				global.resetRot = global.resetRotNew
 				load_game(2)
 				'If global.finish=0 Then player(0).punkte+=1
 
 				'player(0).aktu_world=2
 
 			
+		  		global.resetX = EntityX(global.tile(1,1))
+				global.resetY = EntityY(global.tile(1,1))
+				global.resetZ = EntityZ(global.tile(1,1))
+				
+				
+				
+				
+				
 			ElseIf player(0).aktu_world=2 Then
 				'freeshadow(global.tileshadow(1,1))
 				'freeshadow(global.tileshadow(1,2))
@@ -267,11 +310,16 @@ Sub update_game
 
 				
 				If global.item_belegt(1,1)<>0 Then freeEntity global.item(1,1)
+				global.resetRot = global.resetRotNew
 				load_game(1) 
 				'If global.finish=0 Then player(0).punkte+=1
 				'WindowTitle Str(player(0).meter_sec)
 				'player(0).aktu_world
-
+				
+		  		global.resetX = EntityX(global.tile(2,1))
+				global.resetY = EntityY(global.tile(2,1))
+				global.resetZ = EntityZ(global.tile(2,1))
+				
 			EndIf
 		EndIf
 		
@@ -318,29 +366,50 @@ Sub update_game
 
 	moveEntity player(0).obj,0,0,-(player(0).max_speed-player(0).speed_minus)*global.fs*2
 	
-	player(0).meter+=(player(0).max_speed-player(0).speed_minus)*global.fs
-	player(0).speed_minus+=3*global.fs
-	If player(0).speed_minus>player(0).max_speed Then player(0).speed_minus=player(0).max_speed
-	If player(0).sprung_aktiv=1 Then
-		moveEntity player(0).obj,0,Abs(player(0).sprung_dauer-1-player(0).sprung_aktu_dauer),0'turnentity player,1,0,0
-		player(0).sprung_aktu_dauer+=1
-		If player(0).sprung_aktu_dauer>=player(0).sprung_dauer Then
-			player(0).sprung_aktiv=-1
-		EndIf
-		
-	Else
-		
-	EndIf
+	
+	player(0).last_rot_was_delete = 0
+	
 	If EntityCollided(player(0).obj,2)<>0 Then
   		player(0).sprung_aktiv=0
   		moveEntity player(0).obj,0,-20*global.fs,0
+  		
+  		
 	Else
+		
+		'If player(0).sprung_aktiv=0 Then
+		'	moveEntity player(0).obj,0,0,(player(0).max_speed-player(0).speed_minus)*global.fs*2
+		'	turnEntity player(0).obj,-player(0).last_rot,0,0
+		'	moveEntity player(0).obj,0,0,-(player(0).max_speed-player(0).speed_minus)*global.fs*2
+		'	
+		'EndIf
+		
+		player(0).sprung_aktiv=1
+		
 		moveEntity player(0).obj,0,-80*global.fs,0
 	EndIf
-	If Entitypitch(player(0).obj)<>0 Then
-  		If Entitypitch(player(0).obj)>0 Then turnentity player(0).obj,-100*global.fs,0,0	
-  		If Entitypitch(player(0).obj)<0 Then turnentity player(0).obj,100*global.fs,0,0
-   EndIf
+	
+	
+	player(0).meter+=(player(0).max_speed-player(0).speed_minus)*global.fs
+	player(0).speed_minus+=3*global.fs
+	If player(0).speed_minus>player(0).max_speed Then player(0).speed_minus=player(0).max_speed
+	
+	'If player(0).sprung_aktiv=1 Then
+	'	'moveEntity player(0).obj,0,Abs(player(0).sprung_dauer-1-player(0).sprung_aktu_dauer),0'turnentity player,1,0,0
+	'	player(0).sprung_aktu_dauer+=1
+	'	If player(0).sprung_aktu_dauer>=player(0).sprung_dauer Then
+	'		player(0).sprung_aktiv=-1
+	'	EndIf
+	'	
+	'Else
+	'	
+	'EndIf
+	
+	If Entitypitch(player(0).obj)<>45 and player(0).sprung_aktiv = 1 Then
+		
+  		If Entitypitch(player(0).obj)>45 Then turnentity player(0).obj,-100*global.fs,0,0	
+  		If Entitypitch(player(0).obj)<45 Then turnentity player(0).obj,100*global.fs,0,0
+	EndIf
+	
    If EntityRoll(player(0).obj)<>0 Then
    	If EntityRoll(player(0).obj)>0 Then turnentity player(0).obj,0,0,-100*global.fs
    	If EntityRoll(player(0).obj)<0 Then turnentity player(0).obj,0,0,100*global.fs
@@ -355,18 +424,108 @@ Sub update_game
 	player(0).pos_y=Entityy(player(0).obj)
 	player(0).pos_z=Entityz(player(0).obj)
 	
+		
+	If player(0).pos_y < 0 Then
+  		
+  		player(0).sprung_aktiv=0
+  		
+  		
+  		player(0).speed_minus = player(0).max_speed*0.5
+  		
+		'global.resetX = EntityX(player(0).obj)
+		'global.resetY = EntityY(player(0).obj)
+		'global.resetZ = EntityZ(player(0).obj)
+
+		
+		'moveEntity player(0).obj,0,100,0
+		
+		For i As Integer = 1 To 2
+			For j As Integer = 1 To 2
+				moveEntity global.tile(i,j),0,-100,0
+			Next
+		Next
+		
+		
+		RotateEntity player(0).obj,0,global.resetRot,0
+		'EntityPitch(global.tile(1,1)),EntityYaw(global.tile(1,1)),EntityRoll(global.tile(1,1))
+  		
+  		'If player(0).isReset=0 Then
+  			While (EntityX(player(0).obj) <> global.resetX Or EntityY(player(0).obj) <> global.resetY+30 Or EntityZ(player(0).obj) <> global.resetZ)
+  				PositionEntity player(0).obj, global.resetX, global.resetY+30, global.resetZ
+  				
+  				updateworld
+   			renderworld	
+  			Wend
+  			
+  			
+  			
+  			moveEntity player(0).obj,0,0,40
+  			
+  			
+		For i As Integer = 1 To 2
+			For j As Integer = 1 To 2
+				moveEntity global.tile(i,j),0,100,0
+			Next
+		Next
+  			
+  			
+  		'	player(0).isReset = 1
+  		'Else
+  		'	PositionEntity player(0).obj, global.resetX+200, global.resetY+50, global.resetZ
+  		'	player(0).isReset = 0
+  		'EndIf
+	EndIf
+	
+	'rotateEntity
+	Dim As Double tmp = 0,diff
+	diff = Sqr((player(0).old_pos_x - player(0).pos_x)^2 + (player(0).old_pos_z - player(0).pos_z)^2)
+	
+		tmp =  ACos(0) - ATan2(diff,player(0).old_pos_y - player(0).pos_y)
+	
+	'If (player(0).old_pos_z > player(0).pos_z) Then
+	'	tmp -= ACos(0)*2
+	'	tmp *= -1
+	'	
+
+	'	'rotateEntity player(0).obj,-(tmp/ACos(0)*90),0,0	
+	'	rotateEntity player(0).obj,-25,EntityYaw(player(0).obj),EntityRoll(player(0).obj)
+	'ElseIf (player(0).old_pos_z < player(0).pos_z) then
+	'	rotateEntity player(0).obj,25,EntityYaw(player(0).obj),EntityRoll(player(0).obj)
+	'Else
+	'	rotateEntity player(0).obj,0,EntityYaw(player(0).obj),EntityRoll(player(0).obj)
+	'End If
+	'
+	
+	
+		
+	'EndIf
+
+			'tmp -= player(0).rot_y
+			'	
+			
+		
+			'player(0).rot_y += tmp
+			
+			
+				
+			player(0).old_pos_x=player(0).pos_x
+			player(0).old_pos_z=player(0).pos_z
+			player(0).old_pos_y=player(0).pos_y
+
+		
+		'WindowTitle (Str(tmp/(ACos(0))))
+
 
 	player(0).meter_sec=(player(0).max_speed-player(0).speed_minus) '(player(0).meter-player(0).start_meter)/(Timer-player(0).start_zeit)\10000
 
 	rotateSprite global.SpeedMeter(2),60-1.5*player(0).meter_sec
-	
-	player(0).old_pos_x=player(0).pos_x
-	player(0).old_pos_z=player(0).pos_z
-	player(0).old_pos_y=player(0).pos_y
-	
-	Senddata(1,"PlayPos",Str(EntityX(player(0).obj)*1000),Str(Entityy(player(0).obj)*1000),Str(Entityz(player(0).obj)*1000),1,1,1,1)
-	Senddata(1,"PlayRot",Str(EntityPitch(player(0).obj)),Str(EntityYaw(player(0).obj)),Str(EntityRoll(player(0).obj)),1,1,1,2)
 
+	If (Timer - global.last_player_send > 0.1) Then
+		'WindowTitle Str(Timer - global.last_player_send) 
+		global.last_player_send = timer
+		Senddata(1,"PlayPos",Str(EntityX(player(0).obj)*1000),Str(Entityy(player(0).obj)*1000),Str(Entityz(player(0).obj)*1000),1,1,1,1)
+		Senddata(1,"PlayRot",Str(EntityPitch(player(0).obj)),Str(EntityYaw(player(0).obj)),Str(EntityRoll(player(0).obj)),1,1,1,2)
+	End If
 	'Gegenspieler
 	For pl_i As Integer = 1 To 10
 		'If player(pl_i).enable=1 Then
@@ -471,7 +630,7 @@ Sub render_gfx
 End Sub
 
 Sub init_game
-	Collisions 1,2,2  
+	Collisions 1,2,2
 	load_game(player(0).aktu_world)
 	gfx(1,500,5)
 	gfx_player(1,25,5)
@@ -496,7 +655,10 @@ Sub init_game
 	
 
 	moveEntity player(0).obj,0,0,-10	
-
+	
+	
+	
+	
 	'gamePlayer Ready!!
 	Senddata(1,"plgarde","---","---","---",1,2,1,1)
 	showEntity global.waiting

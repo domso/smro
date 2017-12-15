@@ -8,7 +8,7 @@ Dim Shared RV as TSNEPlay_GURUCode
 Declare Sub log_chat(input_msg As String)
 Declare Sub Senddata(player As Integer,data_send_1 As String,data_send_2 As String,data_send_3 As String,data_send_4 As String,data_type_1 As Integer,data_type_2 As Integer,data_type_3 As Integer,data_type_4 As Integer)
 
-ChDir("resclient")
+chdir("resclient")
 Dim Shared As String daytimealias(1 To 2)
 daytimealias(1)="Day"
 daytimealias(2)="Night"
@@ -85,9 +85,9 @@ Constructor config_type
 	this.config(2).title="GFX-snow"
 	this.config(2).value=1
 	this.config(3).title="GFX-player"
-	this.config(3).value=1
+	this.config(3).value=0
 	this.config(4).title="Local server"
-	this.config(4).value=0
+	this.config(4).value=1
 	
 	
 	this.config(5).title="Select Server"
@@ -193,7 +193,7 @@ Sub global_type.getServerData
 	
 	If this.serveraddresse(1)="" Then
 		tmpHead="This is the serverList!"
-		this.serveraddresse(1)="85.25.192.29"
+		this.serveraddresse(1)="127.0.0.1"
 		this.serverport(1)=9850
 	EndIf
 	
@@ -201,7 +201,7 @@ Sub global_type.getServerData
 	
 	Open "ServerIP.txt" For Binary As #f
 		print #f,tmpHead
-		For i As Integer = 1 To 10
+		For i As Integer = 2 To 10
 			If this.serveraddresse(i)<>"" Then
 				Print #f,this.serveraddresse(i)+" "+Str(this.serverport(i))
 			Else
@@ -216,24 +216,26 @@ Sub global_type.getServerData
 		this.serveraddresse(0)="127.0.0.1"
 		this.serverport(0)=9850
 		this.configvalue.config(6).value=0
-		
-		Shell "start ../bin/server.exe "+Str(this.serverport(0))
+		Shell "start ../bin/server "+Str(this.serverport(0))
 	EndIf
 
 	
 End Sub
 
 Sub global_type.quit(temp_mx As Integer,temp_my As Integer,temp_mb As Integer)
+	
 	Dim As Integer temp_x,temp_y
 	temp_x=710-11
 	temp_y=190-11
 	Put (temp_x,temp_y),this.closeobj,Alpha
 	If temp_mx>temp_x+11 And temp_mx<temp_x+46 And temp_my>temp_y+11 And temp_my<temp_y+46 And temp_mb=1 Then
+		screenunlock
+		end
+		If this.configValue.config(4).value=1 Then Shell "taskkill \im server.exe"
 		
-		If this.configValue.config(4).value=1 Then Shell "taskkill /im server.exe /f"
-			
-		End
-	EndIf
+		
+		
+	End If
 End Sub
 
 Sub global_type.configButton(temp_mx As Integer,temp_my As Integer,temp_mb As Integer)
@@ -427,6 +429,7 @@ Sub global_type.init
 End Sub
 
 Sub global_type.window_move
+screenunlock
 	If (1/(Timer-this.zeit)>this.MaxFps) Then
 		Do
 		Loop Until 1/(Timer-this.zeit)<this.MaxFps
@@ -452,12 +455,17 @@ Sub global_type.window_move
       END IF
     END SELECT
   END If
+  screenlock
+  
 End Sub
 
 function global_type.input_name As String
 	Dim As String temp_msg,key
 	Dim As Integer mx,my,mr,mb
+	Dim As Double f,fps
 	Do
+			f = Timer
+	
 		ScreenLock
 		Cls
 		GetMouse mx,my,mr,mb
@@ -471,7 +479,7 @@ function global_type.input_name As String
 	
 		'Line (()
 		'(((this.windowx-410)/2)+318,this.windowy/2+20),RGB(90,90,90),bf
-		Put ((this.windowx)/2-123,this.windowy/2-11+150),chatlittleBackground,alpha
+		Put ((this.windowx)/2-123,this.windowy/2-11+150),this.chatlittleBackground,alpha
 		Draw String (this.windowx/2-(Len(game(0).player_name(0))/2*8),this.windowy/2+5+150),game(0).player_name(0)
 		
 		key=InKey
@@ -485,14 +493,22 @@ function global_type.input_name As String
 		If Len(game(0).player_name(0))>9 Then game(0).player_name(0)=Mid(game(0).player_name(0),1,9)
 		If MultiKey(&h1C) And game(0).player_name(0)<>"" Then
 			If Len(game(0).player_name(0))<4 Then game(0).player_name(0)+="     "
+			
 			Return game(0).player_name(0)
 		EndIf
 		
 		
 		
-		this.window_move
+		'this.window_move
 	ScreenunLock
 	Sleep 1,1
+	
+	Do
+		Sleep 10,1
+		fps = Timer - f
+	Loop Until fps > 1/10
+	
+	
 	Loop
 End Function
 
@@ -544,19 +560,19 @@ Sub global_type.hsc
 
 		Draw String (((this.windowx)/2)-225+22+60,this.windowy/4+32+75-40),game(0).hsc_player_name(1)
 		Draw String (((this.windowx)/2)-225+22+200,this.windowy/4+32+75-40),Str(game(0).hsc_score(1))+"x"
-		Draw String (((this.windowx)/2)-225+5+300,this.windowy/4+32+75-40),Mid(Str(game(0).hsc_game_time(1)),1,4)+"sec"
+		Draw String (((this.windowx)/2)-225+5+300,this.windowy/4+32+75-40),Str(game(0).hsc_game_time(1))+"sec"
 		
 		Draw String (((this.windowx)/2)-225+22+60,this.windowy/4+32+125-39),game(0).hsc_player_name(2)
 		Draw String (((this.windowx)/2)-225+22+200,this.windowy/4+32+125-39),Str(game(0).hsc_score(2))+"x"
-		Draw String (((this.windowx)/2)-225+5+300,this.windowy/4+32+125-39),Mid(Str(game(0).hsc_game_time(2)),1,4)+"sec"
+		Draw String (((this.windowx)/2)-225+5+300,this.windowy/4+32+125-39),Str(game(0).hsc_game_time(2))+"sec"
 		Draw String (((this.windowx)/2)-225+22+60,this.windowy/4+32+170-36),game(0).hsc_player_name(3)
 		Draw String (((this.windowx)/2)-225+22+200,this.windowy/4+32+170-36),Str(game(0).hsc_score(3))+"x"
-		Draw String (((this.windowx)/2)-225+5+300,this.windowy/4+32+170-36),Mid(Str(game(0).hsc_game_time(3)),1,4)+"sec"
+		Draw String (((this.windowx)/2)-225+5+300,this.windowy/4+32+170-36),Str(game(0).hsc_game_time(3))+"sec"
 		
 		For i As Integer = 1 To 7
 			Draw String (((this.windowx)/2)-225+22+60,this.windowy/4+32+156+i*25-12),game(0).hsc_player_name(i+3)
 			Draw String (((this.windowx)/2)-225+22+200,this.windowy/4+32+156+i*25-12),Str(game(0).hsc_score(i+3))+"x"
-			Draw String (((this.windowx)/2)-225+5+300,this.windowy/4+32+156+i*25-12),Mid(Str(game(0).hsc_game_time(i+3)),1,4)+"sec"
+			Draw String (((this.windowx)/2)-225+5+300,this.windowy/4+32+156+i*25-12),Str(game(0).hsc_game_time(i+3))+"sec"
 		Next
 
 		For i As Integer = 1 To 10
@@ -582,7 +598,7 @@ Sub global_type.chat
 	For g_i As Integer = 1 To 10
 		game(0).ready(g_i)=0
 	Next
-	
+	screenunlock
 	Do
 		
 		temp_zeit=timer
@@ -901,9 +917,10 @@ Sub game_type.start
 	Do
 	Loop Until this.set_start_game=1
 	this.set_start_game=0
-	ChDir("..")
-	'Shell "start main.exe "+global.serverAddresse(global.configvalue.config(6).value)+" "+Str(global.serverPort(global.configvalue.config(6).value))+" "+send_game_string+" "+Str(this.daytime)+ConfigParam
-	Shell "start bin/main.exe "+global.serverAddresse(global.configvalue.config(6).value)+" "+Str(global.serverPort(global.configvalue.config(6).value))+" "+send_game_string+" "+Str(this.daytime)+ConfigParam
+	chdir("..")
+	
+	Shell "start bin/main "+global.serverAddresse(global.configvalue.config(6).value)+" "+Str(global.serverPort(global.configvalue.config(6).value))+" "+send_game_string+" "+Str(this.daytime)+ConfigParam
+	'Shell "LD_LIBRARY_PATH=. ./bin/main "+global.serverAddresse(global.configvalue.config(6).value)+" "+Str(global.serverPort(global.configvalue.config(6).value))+" "+send_game_string+" "+Str(this.daytime)+ConfigParam
 
 	chdir("resclient")
 End Sub
@@ -1005,110 +1022,91 @@ Sub Senddata(player As Integer,data_send_1 As String,data_send_2 As String,data_
 
 End Sub
 
-Sub TSNEPlay_Data(ByVal V_FromPlayerID as UInteger, ByVal V_ToPlayerID as UInteger, ByRef V_Data as String)
-	
-	Dim As String tmpData
-	tmpData = V_Data
-	Do
-		
-		If Left(tmpData,3)="|||" Then tmpData = Mid(tmpData,4)
-			if tmpData = "" then Return
-			If InStr(tmpData,"|||") = 0 Then Return
-		tmpData = Mid(V_Data,1,InStr(V_Data,"|||")-1)
-	
-		Dim As String ds_data(1 To 4)
-		Dim As Integer dt_data(1 To 4),anzahl_ds,anzahl_dt,aktu_stelle,ds_len(1 To 4),dt_len(1 To 4)
-		
-		
-		anzahl_ds=Val(Mid(tmpData,1,1))
-		
-		
-		If anzahl_ds>=1 Then ds_len(1)=Val(Mid(tmpData,2,1))
-		If anzahl_ds>=2 Then ds_len(2)=Val(Mid(tmpData,3,1))
-		If anzahl_ds>=3 Then ds_len(3)=Val(Mid(tmpData,4,1))
-		If anzahl_ds>=4 Then ds_len(4)=Val(Mid(tmpData,5,1))
-		
-		
-		If anzahl_ds>=1 Then ds_data(1)=Mid(tmpData,2+anzahl_ds,ds_len(1))
-		aktu_stelle=ds_len(1)+2+anzahl_ds
-		If anzahl_ds>=2 Then ds_data(2)=Mid(tmpData,aktu_stelle,ds_len(2))
-		aktu_stelle+=ds_len(2)
-		If anzahl_ds>=3 Then ds_data(3)=Mid(tmpData,aktu_stelle,ds_len(3))
-		aktu_stelle+=ds_len(3)
-		If anzahl_ds>=4 Then ds_data(4)=Mid(tmpData,aktu_stelle,ds_len(4))
-		aktu_stelle+=ds_len(4)
-		
-		anzahl_dt=Val(Mid(tmpData,aktu_stelle,1))
-		If anzahl_dt>=1 Then dt_len(1)=Val(Mid(tmpData,aktu_stelle+1,1))
-		If anzahl_dt>=2 Then dt_len(2)=Val(Mid(tmpData,aktu_stelle+2,1))
-		If anzahl_dt>=3 Then dt_len(3)=Val(Mid(tmpData,aktu_stelle+3,1))
-		If anzahl_dt>=4 Then dt_len(4)=Val(Mid(tmpData,aktu_stelle+4,1))
-		
-		If anzahl_dt>=1 Then dt_data(1)=Val(Mid(tmpData,aktu_stelle+anzahl_dt+1,dt_len(1)))
-		aktu_stelle+=dt_len(1)+anzahl_dt+1
-		If anzahl_dt>=2 Then dt_data(2)=Val(Mid(tmpData,aktu_stelle,dt_len(2)))
-		aktu_stelle+=dt_len(2)
-		If anzahl_dt>=3 Then dt_data(3)=Val(Mid(tmpData,aktu_stelle,dt_len(3)))
-		aktu_stelle+=dt_len(3)
-		If anzahl_dt>=4 Then dt_data(4)=Val(Mid(tmpData,aktu_stelle,dt_len(4)))
-		aktu_stelle+=dt_len(4)
-		
-		'####################################################################################
-		
-		If dt_data(1)=2 Then
-			If dt_data(2)=1 Then
-				If dt_data(3)=1 Then
-					game(0).set_start_game=1
-					game(0).count=dt_data(4)
-				EndIf
-			EndIf
-		EndIf
-		
-		If dt_data(1)=3 Then
-			game(0).player(dt_data(3))=dt_data(4)'V_FromPlayerID
-			game(0).player_name(dt_data(3))=ds_data(2)
-			game(0).player_id(dt_data(3))=dt_data(2)
-			game(0).ready(dt_data(3))=Val(ds_data(3))
-			game(0).set_ready=Val(ds_data(4))
-		EndIf
-		
-		If dt_data(1)=4 Then
-			If dt_data(2)=1 Then
-				If dt_data(3)=1 Then
-					If game(dt_data(4)).enable=0 then
-						game(dt_data(4)).enable=1
-						'game(dt_data(4)).player_name(0)="test"
-						game(dt_data(4)).title=ds_data(2)	
-					EndIf			
-				EndIf
-				If dt_data(3)=0 Then game(dt_data(4)).enable=0
-				
-			EndIf
-			If dt_data(2)=2 Then
-				If dt_data(3)=1 Then
-					If dt_data(4)=1 Then
-						game(0).enable=0
-					EndIf
-				EndIf
-			EndIf
-			If dt_data(2)=3 Then
-				If dt_data(3)=1 Then
-					game(0).hsc_player_name(dt_data(4))=(ds_data(1))
-					'Print game(0).hsc_player_name(dt_data(4))
-					game(0).hsc_score(dt_data(4))=Val(ds_data(2))
-					game(0).hsc_game_time(dt_data(4))=Val(ds_data(4))/1000
-				EndIf
-				
-			EndIf
-			
-		EndIf
-		
-		If dt_data(1)=5 Then
-			game(0).max_tile=Val(ds_data(2))
-			game(0).daytime=Val(ds_data(3))
-		EndIf
-	loop
 
+Sub TSNEPlay_Data(ByVal V_FromPlayerID as UInteger, ByVal V_ToPlayerID as UInteger, ByRef V_Data as String)
+Dim As String tmpData
+tmpData = V_Data
+Do
+If Left(tmpData,3)="|||" Then tmpData = Mid(tmpData,4)
+if tmpData = "" then Return
+If InStr(tmpData,"|||") = 0 Then Return
+tmpData = Mid(V_Data,1,InStr(V_Data,"|||")-1)
+Dim As String ds_data(1 To 4)
+Dim As Integer dt_data(1 To 4),anzahl_ds,anzahl_dt,aktu_stelle,ds_len(1 To 4),dt_len(1 To 4)
+anzahl_ds=Val(Mid(tmpData,1,1))
+If anzahl_ds>=1 Then ds_len(1)=Val(Mid(tmpData,2,1))
+If anzahl_ds>=2 Then ds_len(2)=Val(Mid(tmpData,3,1))
+If anzahl_ds>=3 Then ds_len(3)=Val(Mid(tmpData,4,1))
+If anzahl_ds>=4 Then ds_len(4)=Val(Mid(tmpData,5,1))
+If anzahl_ds>=1 Then ds_data(1)=Mid(tmpData,2+anzahl_ds,ds_len(1))
+aktu_stelle=ds_len(1)+2+anzahl_ds
+If anzahl_ds>=2 Then ds_data(2)=Mid(tmpData,aktu_stelle,ds_len(2))
+aktu_stelle+=ds_len(2)
+If anzahl_ds>=3 Then ds_data(3)=Mid(tmpData,aktu_stelle,ds_len(3))
+aktu_stelle+=ds_len(3)
+If anzahl_ds>=4 Then ds_data(4)=Mid(tmpData,aktu_stelle,ds_len(4))
+aktu_stelle+=ds_len(4)
+anzahl_dt=Val(Mid(tmpData,aktu_stelle,1))
+If anzahl_dt>=1 Then dt_len(1)=Val(Mid(tmpData,aktu_stelle+1,1))
+If anzahl_dt>=2 Then dt_len(2)=Val(Mid(tmpData,aktu_stelle+2,1))
+If anzahl_dt>=3 Then dt_len(3)=Val(Mid(tmpData,aktu_stelle+3,1))
+If anzahl_dt>=4 Then dt_len(4)=Val(Mid(tmpData,aktu_stelle+4,1))
+If anzahl_dt>=1 Then dt_data(1)=Val(Mid(tmpData,aktu_stelle+anzahl_dt+1,dt_len(1)))
+aktu_stelle+=dt_len(1)+anzahl_dt+1
+If anzahl_dt>=2 Then dt_data(2)=Val(Mid(tmpData,aktu_stelle,dt_len(2)))
+aktu_stelle+=dt_len(2)
+If anzahl_dt>=3 Then dt_data(3)=Val(Mid(tmpData,aktu_stelle,dt_len(3)))
+aktu_stelle+=dt_len(3)
+If anzahl_dt>=4 Then dt_data(4)=Val(Mid(tmpData,aktu_stelle,dt_len(4)))
+aktu_stelle+=dt_len(4)
+'####################################################################################
+If dt_data(1)=2 Then
+If dt_data(2)=1 Then
+If dt_data(3)=1 Then
+game(0).set_start_game=1
+game(0).count=dt_data(4)
+EndIf
+EndIf
+EndIf
+If dt_data(1)=3 Then
+game(0).player(dt_data(3))=dt_data(4)'V_FromPlayerID
+game(0).player_name(dt_data(3))=ds_data(2)
+game(0).player_id(dt_data(3))=dt_data(2)
+game(0).ready(dt_data(3))=Val(ds_data(3))
+game(0).set_ready=Val(ds_data(4))
+EndIf
+If dt_data(1)=4 Then
+If dt_data(2)=1 Then
+If dt_data(3)=1 Then
+If game(dt_data(4)).enable=0 then
+game(dt_data(4)).enable=1
+'game(dt_data(4)).player_name(0)="test"
+game(dt_data(4)).title=ds_data(2)
+EndIf
+EndIf
+If dt_data(3)=0 Then game(dt_data(4)).enable=0
+EndIf
+If dt_data(2)=2 Then
+If dt_data(3)=1 Then
+If dt_data(4)=1 Then
+game(0).enable=0
+EndIf
+EndIf
+EndIf
+If dt_data(2)=3 Then
+If dt_data(3)=1 Then
+game(0).hsc_player_name(dt_data(4))=(ds_data(1))
+'Print game(0).hsc_player_name(dt_data(4))
+game(0).hsc_score(dt_data(4))=Val(ds_data(2))
+game(0).hsc_game_time(dt_data(4))=Val(ds_data(4))/1000
+EndIf
+EndIf
+EndIf
+If dt_data(1)=5 Then
+game(0).max_tile=Val(ds_data(2))
+game(0).daytime=Val(ds_data(3))
+EndIf
+loop
 End Sub
 
 Sub global_type.verbinden
@@ -1116,7 +1114,8 @@ Sub global_type.verbinden
 	TSNEPlay_CloseAll()
 	
 	RV = TSNEPlay_ConnectToServer(this.serverAddresse(global.configvalue.config(6).value),this.serverPort(global.configvalue.config(6).value), game(0).player_name(0),"",0,0,@TSNEPlay_Player_Disconnected,@TSNEPlay_Message,0,@TSNEPlay_Data)
-
+	'RV = TSNEPlay_ConnectToServer("klingenbund.org", 9850, game(0).player_name(0), "",0,0,@TSNEPlay_Player_Disconnected,@TSNEPlay_Message,0,@TSNEPlay_Data)
+	'If RV <> TSNEPlay_NoError Then Print "[ERROR] "; TSNEPlay_Desc_GetGuruCode(RV):' End -1
 End Sub
 
 
@@ -1125,13 +1124,17 @@ global.init
 global.verbinden
 
 global.zeit=Timer
+
+Dim As Double f
 Do
-	
+
 	global.chat
 	ScreenUnLock
 	game(0).start
 	game(0).wait
 	global.hsc
+	
+	
 	'end
 Loop
 

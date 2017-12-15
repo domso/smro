@@ -36,10 +36,10 @@ End Type
 Type global_type
 	As Integer windowx,windowy,finish,ready,setdaytime=3
 	As daytimeType daytime(1 To 3)
-	As Double zeit,fs
+	As Double zeit,fs, last_player_send=0
 	As String param(1 To 3),world
-	As Any Ptr camera,light,ter(1 To 9),tile(1 to 2,1 To 3),sky_box,item(1 To 2, 1 To 5)
-	As double tile_belegt(1 to 2,1 To 3),deko_belegt(1 To 2),tile_rot,tile_x,tile_z,item_belegt(1 To 2,1 To 5),ter_x,ter_z
+	As Any Ptr camera,light,ter(1 To 9),tile(1 to 2,1 To 3),sky_box,item(1 To 2, 1 To 5), finish_tile
+	As double tile_belegt(1 to 2,1 To 3),deko_belegt(1 To 2),tile_rot,tile_x,tile_z,item_belegt(1 To 2,1 To 5),ter_x,ter_z, resetX, resetY, resetZ, resetRot, resetRotNew=0
 	Declare Sub init
 	Declare Sub sendhsc(hsc_name As String,hsc_punkte As String, hsc_meter As String, hsc_time As double,force As integer)
 
@@ -134,7 +134,7 @@ Sub global_type.init
 	'EntityParent this.light,this.camera
 	For t_i As Integer = 1 To 9
 		this.ter(t_i)=loadMesh("ground.b3d")
-		Entitytype this.ter(t_i),2
+		Entitytype this.ter(t_i),4
 		moveEntity this.ter(t_i),50,-1,50
 	Next
 	moveEntity this.ter(2),100,0,0
@@ -186,8 +186,8 @@ End Type
 Dim Shared As Any Ptr player_obj
 Type player_type
 	As Any Ptr obj,obj2,shadow,shadowMeshObj
-	As double aktu_world,speed_minus,max_speed,gfx,gfx_count,sprung_aktiv,sprung_dauer,sprung_aktu_dauer,zeit,start_zeit,finish_zeit,pos_x,pos_y,pos_z,old_pos_x,old_pos_y,old_pos_z,rot_x,rot_y,rot_z,meter_sec
-	As Integer meter,start_meter,modi,enable,punkte
+	As double aktu_world,speed_minus,max_speed,gfx,gfx_count,sprung_aktiv,sprung_dauer,sprung_aktu_dauer,zeit,start_zeit,finish_zeit,pos_x,pos_y,pos_z,old_pos_x,old_pos_y,old_pos_z,rot_x,rot_y,rot_z,meter_sec, last_rot
+	As Integer meter,start_meter,modi,enable,punkte,last_rot_was_delete, isReset=0
 	Declare Sub init
 	Declare Sub controlls(plfs As Double)
 End Type
@@ -207,15 +207,27 @@ Sub player_type.init
 	this.aktu_world=1
 	Entitytype This.obj,1
 	this.sprung_dauer=8
-
+	this.last_rot = 0
+	This.last_rot_was_delete = 0
 End Sub
 
 Sub player_type.controlls(plfs As Double)
-
+	this.last_rot = 0
 	If MultiKey(&h48) And this.sprung_aktiv=0 Then
 		this.gfx=1
 		If this.speed_minus>0 then 
-			this.speed_minus-=200*plfs*(1/((this.meter_sec/5)+1))
+			this.speed_minus-=400*plfs*(1/((this.meter_sec/5)+1))
+			'If wasRotatedInLastIteration <> 2 Then
+				turnEntity this.obj,-100*plfs,0,0
+				this.last_rot = -100*plfs
+			'End If
+			'this.wasRotatedInLastIteration = 1
+		EndIf
+	Else
+		If Entitypitch(this.obj)<>0 And this.sprung_aktiv=0 Then
+  			If Entitypitch(this.obj)>0 Then turnentity this.obj,-100*plfs,0,0	
+  			If Entitypitch(this.obj)<0 Then turnentity this.obj,100*plfs,0,0
+  			'this.wasRotatedInLastIteration += 2
 		EndIf
 	EndIf
 	
@@ -303,7 +315,7 @@ Entityparent global.camera, player(0).obj2
 
 PositionEntity player(0).obj,0,10,0
 
-Dim Shared As Integer anzahl_tile=25
+Dim Shared As Integer anzahl_tile=24
 Dim Shared As tile_type tile(0 To anzahl_tile)
 tile(0).filename="finish.b3d"
 tile(0).typ=1
@@ -350,9 +362,8 @@ tile(3).flip1=1
 tile(3).rot=90
 tile(3).load
 
-tile(4).filename="tile4.b3d"
+tile(4).filename="tile25.b3d"
 tile(4).typ=1
-'tile(4).flip1=1
 tile(4).ry=180
 tile(4).sx=10
 tile(4).sz=10
@@ -571,17 +582,6 @@ tile(24).sz=10
 tile(24).sy=10
 tile(24).lx=10
 tile(24).load
-
-
-tile(25).filename="tile25.b3d"
-tile(25).typ=1
-tile(25).ry=180
-tile(25).sx=10
-tile(25).sz=10
-tile(25).sy=10
-tile(25).lx=10
-tile(25).load
-
 
 
 Dim Shared As Integer item_anzahl=1

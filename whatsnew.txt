@@ -1,14 +1,9 @@
----------Update 0.2---------
+---------Update 0.3---------
 
--Added Configuration Menu
- The following items can be changed:
-	->Fullscreen
-	->Effects
-	->Local server (restart needed!)
-	->Select server from ServerIP.txt
+-Added respawn mechanism
 
--Added daytime (day/night) in game
-
--Added a new tile
+-Speed is now CPU independent
 
 -Removed some bugs
+
+-Removed Linux binaries (Feel free to compile it on your own)
