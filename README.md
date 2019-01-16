@@ -1,4 +1,8 @@
-SnowManRunOnline
+# SnowManRunOnline
+
+<p float="left">
+  <img src="/Screenshots/cd_cover.png" width="100%"/>
+</p>
 
 Please read the "License.txt"
 (https://raw.github.com/domso/smro/master/license.txt)
@@ -6,6 +10,15 @@ Please read the "License.txt"
 Usage:
 Download SnowManRun.exe and run it!
 It will download und update the game!
+
+
+Screenshots:
+<p float="left">
+  <img src="/Screenshots/screenshot1.jpg" width="45%"/>
+  <img src="/Screenshots/screenshot2.jpg" width="45%"/>
+  <img src="/Screenshots/screenshot3.jpg" width="45%"/>
+  <img src="/Screenshots/screenshot4.jpg" width="45%"/>
+</p>
 
 Controlls:
 Use the Arrow-Keys to navigate your Snowman
@@ -15,6 +28,8 @@ Help:
 Connection Problems? -> Delete ServerIp.txt in resclient
 Update Problems? -> Reinstall game
 
+Notes:
+Currently the application is configured to run on a client-side server
 
 Further informations:
 
